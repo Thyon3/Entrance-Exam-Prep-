@@ -1,8 +1,11 @@
-import 'package:finalyearproject/core/widgets/error_banner.dart';
-import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/core/constants/util.dart';
+import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
 import 'package:finalyearproject/features/auth/presentation/pages/login_page.dart';
+import 'package:finalyearproject/features/auth/presentation/theme/auth_theme.dart';
+import 'package:finalyearproject/features/auth/presentation/widgets/auth_form_card.dart';
+import 'package:finalyearproject/features/auth/presentation/widgets/auth_otp_input.dart';
+import 'package:finalyearproject/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:finalyearproject/shared/widgets/role_home_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,13 +26,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _password = TextEditingController();
   final _phone = TextEditingController();
   String _role = 'student';
-  String? _stream;
+  String? _stream = 'Natural';
   String? _gradeLevel = '12';
   final List<TextEditingController> _otp =
       List.generate(6, (_) => TextEditingController());
   String? _pendingEmail;
   bool _loading = false;
   String? _error;
+  bool _obscure = true;
 
   @override
   void dispose() {
@@ -108,132 +112,192 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_step == 0 ? 'Register' : 'Verify Email')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: _step == 0 ? _buildForm() : _buildOtp(),
+    final height = MediaQuery.of(context).size.height;
+    final title = _step == 0 ? 'Create Account' : 'Verify Email';
+
+    return AuthScaffold(
+      title: title,
+      middleSpacingFactor: _step == 0 ? 0.08 : 0.12,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+        onPressed: () {
+          if (_step == 1) {
+            setState(() => _step = 0);
+          } else {
+            Navigator.maybePop(context);
+          }
+        },
+      ),
+      card: AuthFormCard(
+        cardHeightFactor: _step == 0 ? 0.72 : 0.38,
+        logoBottomFactor: _step == 0 ? 0.45 : 0.08,
+        child: _step == 0 ? _buildForm(height) : _buildOtp(height),
       ),
     );
   }
 
-  Widget _buildForm() {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (_error != null) ...[ErrorBanner(message: _error!), const SizedBox(height: 12)],
-          TextFormField(
-            controller: _firstName,
-            decoration: const InputDecoration(labelText: 'First name'),
-            validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _lastName,
-            decoration: const InputDecoration(labelText: 'Last name'),
-            validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _email,
-            decoration: const InputDecoration(labelText: 'Email'),
-            validator: (v) => v == null || !v.contains('@') ? 'Invalid email' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _password,
-            obscureText: true,
-            decoration: const InputDecoration(labelText: 'Password'),
-            validator: (v) => v == null || v.length < 6 ? 'Min 6 characters' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _phone,
-            decoration: const InputDecoration(labelText: 'Phone (optional)'),
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String>(
-            value: _role,
-            decoration: const InputDecoration(labelText: 'Role'),
-            items: const [
-              DropdownMenuItem(value: 'student', child: Text('Student')),
-              DropdownMenuItem(value: 'teacher', child: Text('Teacher')),
-            ],
-            onChanged: (v) => setState(() => _role = v ?? 'student'),
-          ),
-          if (_role == 'student') ...[
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: _stream,
-              decoration: const InputDecoration(labelText: 'Stream'),
+  Widget _buildForm(double height) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            SizedBox(height: height * 0.06),
+            AuthTextField(
+              label: 'First name',
+              controller: _firstName,
+              icon: Icons.person_outline,
+              validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+            ),
+            const SizedBox(height: 10),
+            AuthTextField(
+              label: 'Last name',
+              controller: _lastName,
+              icon: Icons.person_outline,
+              validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+            ),
+            const SizedBox(height: 10),
+            AuthTextField(
+              label: 'Email',
+              controller: _email,
+              keyboardType: TextInputType.emailAddress,
+              icon: Icons.email_outlined,
+              validator: (v) => v == null || !v.contains('@') ? 'Invalid email' : null,
+            ),
+            const SizedBox(height: 10),
+            AuthTextField(
+              label: 'Password',
+              controller: _password,
+              obscureText: _obscure,
+              iconAsset: 'lib/assets/icons/asterisk.png',
+              icon: Icons.lock_outline,
+              suffix: IconButton(
+                icon: Icon(
+                  _obscure ? Icons.visibility_off : Icons.visibility,
+                  color: AuthTheme.darkBlue,
+                ),
+                onPressed: () => setState(() => _obscure = !_obscure),
+              ),
+              validator: (v) => v == null || v.length < 6 ? 'Min 6 characters' : null,
+            ),
+            const SizedBox(height: 10),
+            AuthTextField(
+              label: 'Phone (optional)',
+              controller: _phone,
+              keyboardType: TextInputType.phone,
+              iconAsset: 'lib/assets/icons/phone.png',
+              icon: Icons.phone_outlined,
+            ),
+            const SizedBox(height: 10),
+            AuthDropdownField<String>(
+              label: 'Role',
+              value: _role,
               items: const [
-                DropdownMenuItem(value: 'Natural', child: Text('Natural')),
-                DropdownMenuItem(value: 'Social', child: Text('Social')),
+                DropdownMenuItem(value: 'student', child: Text('Student')),
+                DropdownMenuItem(value: 'teacher', child: Text('Teacher')),
               ],
-              onChanged: (v) => setState(() => _stream = v),
-              validator: (v) => _role == 'student' && v == null ? 'Select stream' : null,
+              onChanged: (v) => setState(() => _role = v ?? 'student'),
             ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: _gradeLevel,
-              decoration: const InputDecoration(labelText: 'Grade'),
-              items: ['9', '10', '11', '12']
-                  .map((g) => DropdownMenuItem(value: g, child: Text('Grade $g')))
-                  .toList(),
-              onChanged: (v) => setState(() => _gradeLevel = v),
-            ),
-          ],
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _loading ? null : _register,
-            child: _loading
-                ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Text('Continue'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const LoginPage()),
-            ),
-            child: const Text('Already have an account?'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOtp() {
-    return Column(
-      children: [
-        if (_error != null) ...[ErrorBanner(message: _error!), const SizedBox(height: 12)],
-        Text('Enter the code sent to $_pendingEmail'),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(
-            6,
-            (i) => SizedBox(
-              width: 44,
-              child: TextField(
-                controller: _otp[i],
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.number,
-                maxLength: 1,
-                onChanged: (v) {
-                  if (v.isNotEmpty && i < 5) FocusScope.of(context).nextFocus();
-                },
+            if (_role == 'student') ...[
+              const SizedBox(height: 10),
+              AuthDropdownField<String>(
+                label: 'Stream',
+                value: _stream,
+                items: const [
+                  DropdownMenuItem(value: 'Natural', child: Text('Natural')),
+                  DropdownMenuItem(value: 'Social', child: Text('Social')),
+                ],
+                onChanged: (v) => setState(() => _stream = v),
+              ),
+              const SizedBox(height: 10),
+              AuthDropdownField<String>(
+                label: 'Grade',
+                value: _gradeLevel,
+                items: ['9', '10', '11', '12']
+                    .map((g) => DropdownMenuItem(value: g, child: Text('Grade $g')))
+                    .toList(),
+                onChanged: (v) => setState(() => _gradeLevel = v),
+              ),
+            ],
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(_error!, style: const TextStyle(color: Colors.red, fontSize: 13)),
+              ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: AuthTheme.primaryButtonStyle(context),
+                onPressed: _loading ? null : _register,
+                child: _loading
+                    ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text('Continue'),
               ),
             ),
-          ),
+            TextButton(
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginPage()),
+              ),
+              child: Text(
+                'Already have an account?',
+                style: AuthTheme.fieldLabel().copyWith(
+                  color: AuthTheme.primaryBlue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildOtp(double height) {
+    return Column(
+      children: [
+        SizedBox(height: height * 0.08),
+        Text(
+          'We sent a verification code to',
+          style: AuthTheme.fieldLabel(),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _pendingEmail ?? '',
+          style: AuthTheme.fieldLabel().copyWith(
+            fontWeight: FontWeight.w700,
+            color: AuthTheme.primaryBlue,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 20),
+        AuthOtpInput(controllers: _otp),
+        if (_error != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(_error!, style: const TextStyle(color: Colors.red)),
+          ),
         const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: _loading ? null : _verify,
-          child: _loading
-              ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-              : const Text('Verify & Continue'),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: AuthTheme.primaryButtonStyle(context),
+            onPressed: _loading ? null : _verify,
+            child: _loading
+                ? const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Text('Verify & Continue'),
+          ),
         ),
       ],
     );

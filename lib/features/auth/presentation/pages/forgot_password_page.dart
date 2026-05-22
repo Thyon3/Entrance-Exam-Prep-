@@ -1,5 +1,7 @@
-import 'package:finalyearproject/core/widgets/error_banner.dart';
 import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
+import 'package:finalyearproject/features/auth/presentation/theme/auth_theme.dart';
+import 'package:finalyearproject/features/auth/presentation/widgets/auth_form_card.dart';
+import 'package:finalyearproject/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -22,6 +24,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> _submit() async {
+    if (_email.text.trim().isEmpty || !_email.text.contains('@')) {
+      setState(() => _error = 'Enter a valid email');
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;
@@ -39,28 +45,58 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Forgot Password')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+    final height = MediaQuery.of(context).size.height;
+
+    return AuthScaffold(
+      title: 'Forgot Password',
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+        onPressed: () => Navigator.maybePop(context),
+      ),
+      card: AuthFormCard(
+        cardHeightFactor: 0.36,
+        logoBottomFactor: 0.1,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (_error != null) ErrorBanner(message: _error!),
-            if (_success != null)
-              Text(_success!, style: const TextStyle(color: Colors.green)),
-            const SizedBox(height: 12),
-            TextField(
+            SizedBox(height: height * 0.11),
+            AuthTextField(
+              label: 'Email',
               controller: _email,
-              decoration: const InputDecoration(labelText: 'Email'),
+              hint: 'Email address',
               keyboardType: TextInputType.emailAddress,
+              icon: Icons.email_outlined,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loading ? null : _submit,
-              child: _loading
-                  ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Text('Send reset link'),
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(_error!, style: const TextStyle(color: Colors.red)),
+              ),
+            if (_success != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  _success!,
+                  style: const TextStyle(color: AuthTheme.green),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            SizedBox(height: height * 0.03),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: AuthTheme.primaryButtonStyle(context),
+                onPressed: _loading ? null : _submit,
+                child: _loading
+                    ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Send reset link'),
+              ),
             ),
           ],
         ),
