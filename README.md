@@ -1,16 +1,49 @@
-# finalyearproject
+# Entrance Exam Prep (Flutter Mobile)
 
-A new Flutter project.
+Mobile version of the Grade 12 entrance exam preparation web app. Uses the **same backend API** as `Final_year_project_2-Entrance-Exam-Preparation-Platform` and follows the **module + clean architecture** layout from `nexatrackerprod`.
 
-## Getting Started
+## Run
 
-This project is a starting point for a Flutter application.
+```bash
+cd finalyearproject
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+## API URL
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Default production API (same as the React app):
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+`https://final-year-project-2-entrance-exam.onrender.com/api`
+
+To use a local backend, edit `lib/core/constants/util.dart`:
+
+```dart
+const String apiUrl = 'http://10.0.2.2:5000/api'; // Android emulator → localhost:5000
+```
+
+## Project structure
+
+```
+lib/
+├── core/           # API client, theme, shared widgets
+├── shared/         # Auth gate, grade provider
+└── features/
+    ├── auth/       # Login, register, forgot/reset password
+    ├── student/    # Dashboard, drawer
+    ├── curriculum/ # Subjects → chapters → topics
+    ├── content/    # Topic tabs (objectives, concept, video, …)
+    ├── engagement/ # Progress, bookmarks, notifications, Q&A
+    ├── teacher/    # Course management, Q&A/issues
+    ├── admin/      # Users, courses
+    ├── profile/
+    └── ai/         # AI study assistant
+```
+
+Each feature uses: `domain/`, `data/` (`*_remote_data_source.dart`), `application/` (Riverpod), `presentation/pages/`.
+
+## Roles
+
+- **Student**: dashboard, curriculum, all topic tabs, AI tutor, bookmarks, reports
+- **Teacher**: subjects/chapters/topics CRUD, Q&A and issue review
+- **Admin**: user status, subject CRUD

@@ -1,0 +1,137 @@
+import 'package:finalyearproject/core/constants/util.dart';
+import 'package:finalyearproject/core/widgets/error_banner.dart';
+import 'package:finalyearproject/features/auth/application/auth_provider.dart';
+import 'package:finalyearproject/features/auth/data/auth_repository.dart';
+import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class ProfilePage extends ConsumerStatefulWidget {
+  const ProfilePage({super.key});
+
+  @override
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  final _first = TextEditingController();
+  final _last = TextEditingController();
+  final _phone = TextEditingController();
+  final _currentPass = TextEditingController();
+  final _newPass = TextEditingController();
+  final _confirmPass = TextEditingController();
+  bool _loading = false;
+  String? _error;
+  String? _success;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final u = ref.read(authProvider).user;
+    if (u != null && _first.text.isEmpty) {
+      _first.text = u.firstName;
+      _last.text = u.lastName;
+      _phone.text = u.phoneNumber ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _first.dispose();
+    _last.dispose();
+    _phone.dispose();
+    _currentPass.dispose();
+    _newPass.dispose();
+    _confirmPass.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveProfile() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final repo = AuthRepository(AuthRemoteDataSource());
+      final user = await repo.updateProfile({
+        'firstName': _first.text.trim(),
+        'lastName': _last.text.trim(),
+        'phoneNumber': _phone.text.trim(),
+      });
+      ref.read(authProvider.notifier).setUser(user);
+      setState(() => _success = 'Profile updated');
+    } catch (e) {
+      setState(() => _error = e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _changePassword() async {
+    if (_newPass.text != _confirmPass.text) {
+      setState(() => _error = 'Passwords do not match');
+      return;
+    }
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      await AuthRepository(AuthRemoteDataSource())
+          .changePassword(_currentPass.text, _newPass.text);
+      setState(() => _success = 'Password changed');
+      _currentPass.clear();
+      _newPass.clear();
+      _confirmPass.clear();
+    } catch (e) {
+      setState(() => _error = e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(authProvider).user;
+    final avatar = resolveMediaUrl(user?.profileImage);
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile')),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          if (_error != null) ErrorBanner(message: _error!),
+          if (_success != null) Text(_success!, style: const TextStyle(color: Colors.green)),
+          Center(
+            child: CircleAvatar(
+              radius: 40,
+              backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
+              child: avatar.isEmpty ? const Icon(Icons.person, size: 40) : null,
+            ),
+          ),
+          const SizedBox(height: 20),
+          TextField(controller: _first, decoration: const InputDecoration(labelText: 'First name')),
+          const SizedBox(height: 12),
+          TextField(controller: _last, decoration: const InputDecoration(labelText: 'Last name')),
+          const SizedBox(height: 12),
+          TextField(controller: _phone, decoration: const InputDecoration(labelText: 'Phone')),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _loading ? null : _saveProfile,
+            child: const Text('Save profile'),
+          ),
+          const Divider(height: 32),
+          TextField(controller: _currentPass, obscureText: true, decoration: const InputDecoration(labelText: 'Current password')),
+          const SizedBox(height: 12),
+          TextField(controller: _newPass, obscureText: true, decoration: const InputDecoration(labelText: 'New password')),
+          const SizedBox(height: 12),
+          TextField(controller: _confirmPass, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm password')),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: _loading ? null : _changePassword,
+            child: const Text('Change password'),
+          ),
+        ],
+      ),
+    );
+  }
+}

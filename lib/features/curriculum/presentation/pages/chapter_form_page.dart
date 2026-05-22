@@ -1,0 +1,53 @@
+import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
+import 'package:flutter/material.dart';
+
+class ChapterFormPage extends StatefulWidget {
+  const ChapterFormPage({super.key, required this.subjectId});
+  final String subjectId;
+
+  @override
+  State<ChapterFormPage> createState() => _ChapterFormPageState();
+}
+
+class _ChapterFormPageState extends State<ChapterFormPage> {
+  final _name = TextEditingController();
+  bool _saving = false;
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    try {
+      await CurriculumRemoteDataSource().createChapter(
+        widget.subjectId,
+        {'chapterName': _name.text.trim()},
+      );
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('New chapter')),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            TextField(controller: _name, decoration: const InputDecoration(labelText: 'Chapter name')),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _saving ? null : _save,
+              child: _saving
+                  ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Create'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
