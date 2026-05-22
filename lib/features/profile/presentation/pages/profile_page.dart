@@ -1,5 +1,6 @@
 import 'package:finalyearproject/core/constants/util.dart';
-import 'package:finalyearproject/core/widgets/error_banner.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/auth/data/auth_repository.dart';
 import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
@@ -52,8 +53,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       _error = null;
     });
     try {
-      final repo = AuthRepository(AuthRemoteDataSource());
-      final user = await repo.updateProfile({
+      final user = await AuthRepository(AuthRemoteDataSource()).updateProfile({
         'firstName': _first.text.trim(),
         'lastName': _last.text.trim(),
         'phoneNumber': _phone.text.trim(),
@@ -90,45 +90,79 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     }
   }
 
+  InputDecoration _dec(String label) => InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+        filled: true,
+        fillColor: Colors.white,
+      );
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final avatar = resolveMediaUrl(user?.profileImage);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const GradientAppBar(title: 'Profile', showNotificationIcon: false),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         children: [
-          if (_error != null) ErrorBanner(message: _error!),
-          if (_success != null) Text(_success!, style: const TextStyle(color: Colors.green)),
-          Center(
-            child: CircleAvatar(
-              radius: 40,
-              backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
-              child: avatar.isEmpty ? const Icon(Icons.person, size: 40) : null,
+          if (_error != null)
+            FuturexContentCard(
+              child: Text(_error!, style: const TextStyle(color: Colors.red)),
+            ),
+          if (_success != null)
+            FuturexContentCard(
+              child: Text(_success!, style: const TextStyle(color: Colors.green)),
+            ),
+          FuturexContentCard(
+            title: 'Account',
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
+                  child: avatar.isEmpty ? const Icon(Icons.person, size: 40) : null,
+                ),
+                const SizedBox(height: 8),
+                Text(user?.email ?? '', style: TextStyle(color: Colors.grey.shade700)),
+                const SizedBox(height: 16),
+                TextField(controller: _first, decoration: _dec('First name')),
+                const SizedBox(height: 12),
+                TextField(controller: _last, decoration: _dec('Last name')),
+                const SizedBox(height: 12),
+                TextField(controller: _phone, decoration: _dec('Phone')),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _loading ? null : _saveProfile,
+                    child: const Text('Save profile'),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 20),
-          TextField(controller: _first, decoration: const InputDecoration(labelText: 'First name')),
-          const SizedBox(height: 12),
-          TextField(controller: _last, decoration: const InputDecoration(labelText: 'Last name')),
-          const SizedBox(height: 12),
-          TextField(controller: _phone, decoration: const InputDecoration(labelText: 'Phone')),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _loading ? null : _saveProfile,
-            child: const Text('Save profile'),
-          ),
-          const Divider(height: 32),
-          TextField(controller: _currentPass, obscureText: true, decoration: const InputDecoration(labelText: 'Current password')),
-          const SizedBox(height: 12),
-          TextField(controller: _newPass, obscureText: true, decoration: const InputDecoration(labelText: 'New password')),
-          const SizedBox(height: 12),
-          TextField(controller: _confirmPass, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm password')),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: _loading ? null : _changePassword,
-            child: const Text('Change password'),
+          FuturexContentCard(
+            title: 'Change password',
+            child: Column(
+              children: [
+                TextField(controller: _currentPass, obscureText: true, decoration: _dec('Current')),
+                const SizedBox(height: 12),
+                TextField(controller: _newPass, obscureText: true, decoration: _dec('New')),
+                const SizedBox(height: 12),
+                TextField(controller: _confirmPass, obscureText: true, decoration: _dec('Confirm')),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _loading ? null : _changePassword,
+                    child: const Text('Update password'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

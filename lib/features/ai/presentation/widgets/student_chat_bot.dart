@@ -1,4 +1,3 @@
-import 'package:finalyearproject/core/constants/app_colors.dart';
 import 'package:finalyearproject/features/ai/data/ai_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -44,23 +43,32 @@ class _StudentChatBotState extends State<StudentChatBot> {
   Widget build(BuildContext context) {
     if (!_open) {
       return FloatingActionButton.extended(
+        backgroundColor: Colors.blue.shade700,
         onPressed: () => setState(() => _open = true),
         icon: const Icon(Icons.smart_toy_outlined),
         label: const Text('AI Tutor'),
       );
     }
     return Material(
-      elevation: 8,
+      elevation: 12,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         width: MediaQuery.of(context).size.width - 32,
         height: 360,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.blue.shade100),
+        ),
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             Row(
               children: [
-                const Text('AI Study Assistant', style: TextStyle(fontWeight: FontWeight.bold)),
+                Icon(Icons.smart_toy, color: Colors.blue.shade700),
+                const SizedBox(width: 8),
+                const Text('AI Study Assistant',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0D47A1))),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -68,6 +76,7 @@ class _StudentChatBotState extends State<StudentChatBot> {
                 ),
               ],
             ),
+            const Divider(),
             Expanded(
               child: ListView.builder(
                 itemCount: _messages.length,
@@ -80,10 +89,10 @@ class _StudentChatBotState extends State<StudentChatBot> {
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isUser ? AppColors.primary.withValues(alpha: 0.1) : AppColors.outline,
-                        borderRadius: BorderRadius.circular(8),
+                        color: isUser ? Colors.blue.shade50 : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Text(m['text'] ?? ''),
+                      child: Text(m['text'] ?? '', style: const TextStyle(fontSize: 14)),
                     ),
                   );
                 },
@@ -95,11 +104,20 @@ class _StudentChatBotState extends State<StudentChatBot> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(hintText: 'Ask anything...'),
+                    decoration: InputDecoration(
+                      hintText: 'Ask anything...',
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
                     onSubmitted: (_) => _send(),
                   ),
                 ),
-                IconButton(onPressed: _send, icon: const Icon(Icons.send)),
+                IconButton(
+                  onPressed: _send,
+                  icon: Icon(Icons.send, color: Colors.blue.shade700),
+                ),
               ],
             ),
           ],

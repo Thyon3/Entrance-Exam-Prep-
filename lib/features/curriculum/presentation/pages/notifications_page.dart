@@ -1,4 +1,6 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -35,21 +37,48 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: GradientAppBar(
+        title: 'Notifications',
+        showNotificationIcon: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _load,
+          ),
+        ],
+      ),
       body: _loading
-          ? const LoadingView()
+          ? const FuturexLoadingBody()
           : RefreshIndicator(
               onRefresh: _load,
               child: ListView.builder(
+                padding: const EdgeInsets.all(16),
                 itemCount: _items.length,
                 itemBuilder: (context, i) {
                   final n = _items[i] as Map;
                   final id = n['_id']?.toString() ?? '';
                   final read = n['readStatus'] == true;
-                  return ListTile(
-                    title: Text(n['title']?.toString() ?? n['message']?.toString() ?? 'Notification'),
-                    subtitle: Text(n['message']?.toString() ?? ''),
-                    trailing: read ? null : TextButton(onPressed: () => _markRead(id), child: const Text('Read')),
+                  return FuturexContentCard(
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(
+                        backgroundColor: read ? Colors.grey.shade300 : Colors.blue.shade700,
+                        child: Icon(
+                          read ? Icons.notifications_none : Icons.notifications_active,
+                          color: read ? Colors.grey : Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      title: Text(
+                        n['title']?.toString() ?? n['message']?.toString() ?? 'Notification',
+                        style: TextStyle(fontWeight: read ? FontWeight.normal : FontWeight.bold),
+                      ),
+                      subtitle: Text(n['message']?.toString() ?? ''),
+                      trailing: read
+                          ? null
+                          : TextButton(onPressed: () => _markRead(id), child: const Text('Read')),
+                    ),
                   );
                 },
               ),

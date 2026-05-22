@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -46,35 +47,63 @@ class _TopicReportsPageState extends State<TopicReportsPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
-        DropdownButtonFormField<String>(
-          value: _type,
-          decoration: const InputDecoration(labelText: 'Issue type'),
-          items: const [
-            DropdownMenuItem(value: 'content_error', child: Text('Content error')),
-            DropdownMenuItem(value: 'technical', child: Text('Technical')),
-            DropdownMenuItem(value: 'other', child: Text('Other')),
-          ],
-          onChanged: (v) => setState(() => _type = v ?? 'content_error'),
+        FuturexContentCard(
+          title: 'Report an issue',
+          child: Column(
+            children: [
+              DropdownButtonFormField<String>(
+                value: _type,
+                decoration: const InputDecoration(
+                  labelText: 'Issue type',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'content_error', child: Text('Content error')),
+                  DropdownMenuItem(value: 'technical', child: Text('Technical')),
+                  DropdownMenuItem(value: 'other', child: Text('Other')),
+                ],
+                onChanged: (v) => setState(() => _type = v ?? 'content_error'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _desc,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(onPressed: _submit, child: const Text('Submit report')),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _desc,
-          maxLines: 4,
-          decoration: const InputDecoration(labelText: 'Description'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Text(
+            'Your reports',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade900,
+            ),
+          ),
         ),
-        const SizedBox(height: 8),
-        ElevatedButton(onPressed: _submit, child: const Text('Submit report')),
-        const SizedBox(height: 20),
-        const Text('Your reports', style: TextStyle(fontWeight: FontWeight.w600)),
         ..._issues.map((i) {
           final m = i as Map;
-          return ListTile(
-            title: Text(m['description']?.toString() ?? ''),
-            subtitle: Text(m['issueStatus']?.toString() ?? 'pending'),
+          return FuturexContentCard(
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(m['description']?.toString() ?? ''),
+              subtitle: Text(m['issueStatus']?.toString() ?? 'pending'),
+            ),
           );
         }),
       ],

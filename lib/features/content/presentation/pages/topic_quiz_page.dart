@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/content/data/content_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,7 @@ class _TopicQuizPageState extends State<TopicQuizPage> {
       await ContentRemoteDataSource().startQuiz(quizId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quiz started. Answer questions in the web app for full timed flow, or use exercise tab for practice.')),
+        const SnackBar(content: Text('Quiz started. Complete questions when ready.')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -43,22 +44,33 @@ class _TopicQuizPageState extends State<TopicQuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _quizzes.length,
       itemBuilder: (context, i) {
         final q = _quizzes[i] as Map;
         final id = q['_id']?.toString() ?? '';
         final title = q['title']?.toString() ?? 'Quiz';
         final duration = q['duration']?.toString() ?? '';
-        return Card(
-          child: ListTile(
-            title: Text(title),
-            subtitle: Text('Duration: ${duration.isEmpty ? '—' : '$duration min'}'),
-            trailing: widget.isStudent
-                ? TextButton(onPressed: () => _startQuiz(id), child: const Text('Start'))
-                : null,
+        return FuturexContentCard(
+          title: title,
+          child: Row(
+            children: [
+              Icon(Icons.quiz_outlined, color: Colors.blue.shade700, size: 40),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  duration.isEmpty ? 'Timed quiz' : '$duration min',
+                  style: TextStyle(color: Colors.grey.shade700),
+                ),
+              ),
+              if (widget.isStudent)
+                ElevatedButton(
+                  onPressed: () => _startQuiz(id),
+                  child: const Text('Start'),
+                ),
+            ],
           ),
         );
       },

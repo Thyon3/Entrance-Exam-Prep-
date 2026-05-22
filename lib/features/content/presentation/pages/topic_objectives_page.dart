@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -40,38 +41,50 @@ class _TopicObjectivesPageState extends State<TopicObjectivesPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     if (!widget.isStudent) {
-      return Padding(
+      return ListView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _controller..text = _objectives.join('\n'),
-              maxLines: 8,
-              decoration: const InputDecoration(
-                labelText: 'Objectives (one per line)',
-                alignLabelWithHint: true,
-              ),
+        children: [
+          FuturexContentCard(
+            title: 'Edit objectives',
+            child: Column(
+              children: [
+                TextField(
+                  controller: _controller..text = _objectives.join('\n'),
+                  maxLines: 8,
+                  decoration: const InputDecoration(
+                    hintText: 'One objective per line',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(onPressed: _save, child: const Text('Save objectives')),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            ElevatedButton(onPressed: _save, child: const Text('Save objectives')),
-          ],
-        ),
+          ),
+        ],
       );
     }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: _objectives.isEmpty
-          ? [const Text('No objectives listed yet.')]
-          : _objectives
-              .map((o) => Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.check_circle_outline),
-                      title: Text(o),
-                    ),
-                  ))
-              .toList(),
+    if (_objectives.isEmpty) {
+      return const Center(child: Text('No objectives listed yet.'));
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: _objectives.length,
+      itemBuilder: (context, i) => FuturexContentCard(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.check_circle_outline, color: Colors.green.shade700),
+            const SizedBox(width: 12),
+            Expanded(child: Text(_objectives[i], style: const TextStyle(fontSize: 15))),
+          ],
+        ),
+      ),
     );
   }
 }

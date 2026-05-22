@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/content/data/content_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,6 @@ class _TopicExamPageState extends State<TopicExamPage> {
   }
 
   Future<void> _load() async {
-    // Topic-level exam practice uses generic question search when no paper linked
     try {
       final data = await ContentRemoteDataSource().getExercises(widget.topicId);
       setState(() {
@@ -36,22 +36,29 @@ class _TopicExamPageState extends State<TopicExamPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       children: [
-        const Text('Practice questions for this topic (exam-style MCQs).'),
-        const SizedBox(height: 12),
+        FuturexContentCard(
+          title: 'Exam practice',
+          child: Text(
+            'Practice questions for this topic. Use the Exercise tab for interactive answers.',
+            style: TextStyle(color: Colors.grey.shade700, height: 1.4),
+          ),
+        ),
         ..._questions.map((q) {
           final m = q as Map;
-          return Card(
-            child: ListTile(
-              title: Text(m['question']?.toString() ?? 'Question'),
-              subtitle: const Text('Tap exercise tab for interactive answers'),
-            ),
+          return FuturexContentCard(
+            title: 'Question',
+            child: Text(m['question']?.toString() ?? '', style: const TextStyle(fontSize: 15)),
           );
         }),
-        if (_questions.isEmpty) const Text('No exam questions available yet.'),
+        if (_questions.isEmpty)
+          const Padding(
+            padding: EdgeInsets.all(24),
+            child: Center(child: Text('No exam questions available yet.')),
+          ),
       ],
     );
   }

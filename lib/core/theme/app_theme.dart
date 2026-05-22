@@ -1,4 +1,4 @@
-import 'package:finalyearproject/core/constants/app_colors.dart';
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -6,41 +6,38 @@ class AppTheme {
   static ThemeData light() {
     final base = ThemeData(
       useMaterial3: true,
+      brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        primary: AppColors.primary,
-        surface: AppColors.background,
+        seedColor: FuturexColors.primary,
+        primary: FuturexColors.primary,
+        surface: FuturexColors.surface,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: FuturexColors.scaffoldBg,
     );
     return base.copyWith(
       textTheme: GoogleFonts.interTextTheme(base.textTheme),
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.card,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
         elevation: 0,
-        centerTitle: false,
       ),
       cardTheme: CardThemeData(
-        color: AppColors.card,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: AppColors.outline),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.card,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        color: FuturexColors.surface,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: FuturexColors.primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(48),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
+      ),
+      tabBarTheme: const TabBarThemeData(
+        labelColor: FuturexColors.primary,
+        unselectedLabelColor: FuturexColors.textSecondary,
+        indicatorColor: FuturexColors.primary,
       ),
     );
   }

@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/admin/data/admin_remote_data_source.dart';
 import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
@@ -49,35 +50,68 @@ class _AdminCoursesPageState extends State<AdminCoursesPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        TextField(controller: _name, decoration: const InputDecoration(labelText: 'Subject name')),
-        DropdownButtonFormField<String>(
-          value: _grade,
-          items: ['9', '10', '11', '12']
-              .map((g) => DropdownMenuItem(value: g, child: Text('Grade $g')))
-              .toList(),
-          onChanged: (v) => setState(() => _grade = v ?? '12'),
+        FuturexContentCard(
+          title: 'Add subject',
+          child: Column(
+            children: [
+              TextField(
+                controller: _name,
+                decoration: const InputDecoration(
+                  labelText: 'Subject name',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                ),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _grade,
+                decoration: const InputDecoration(
+                  labelText: 'Grade',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                ),
+                items: ['9', '10', '11', '12']
+                    .map((g) => DropdownMenuItem(value: g, child: Text('Grade $g')))
+                    .toList(),
+                onChanged: (v) => setState(() => _grade = v ?? '12'),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _stream,
+                decoration: const InputDecoration(
+                  labelText: 'Stream',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'Natural', child: Text('Natural')),
+                  DropdownMenuItem(value: 'Social', child: Text('Social')),
+                ],
+                onChanged: (v) => setState(() => _stream = v ?? 'Natural'),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(onPressed: _create, child: const Text('Add subject')),
+              ),
+            ],
+          ),
         ),
-        DropdownButtonFormField<String>(
-          value: _stream,
-          items: const [
-            DropdownMenuItem(value: 'Natural', child: Text('Natural')),
-            DropdownMenuItem(value: 'Social', child: Text('Social')),
-          ],
-          onChanged: (v) => setState(() => _stream = v ?? 'Natural'),
+        const SizedBox(height: 8),
+        Text(
+          'All subjects',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue.shade900),
         ),
-        ElevatedButton(onPressed: _create, child: const Text('Add subject')),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         ..._subjects.map(
-          (s) => Card(
+          (s) => FuturexContentCard(
             child: ListTile(
-              title: Text(s.subjectName),
+              contentPadding: EdgeInsets.zero,
+              title: Text(s.subjectName, style: const TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text('Grade ${s.gradeLevel} · ${s.stream ?? ''}'),
               trailing: IconButton(
-                icon: const Icon(Icons.delete_outline),
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: () => _delete(s.id),
               ),
             ),

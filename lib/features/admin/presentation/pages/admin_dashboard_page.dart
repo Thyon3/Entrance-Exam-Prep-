@@ -1,3 +1,4 @@
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/admin/presentation/pages/admin_courses_page.dart';
 import 'package:finalyearproject/features/admin/presentation/pages/admin_users_page.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
@@ -15,6 +16,7 @@ class AdminDashboardPage extends ConsumerStatefulWidget {
 }
 
 class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   int _section = 0;
 
   Future<void> _logout() async {
@@ -29,26 +31,37 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Console'),
+      key: _scaffoldKey,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: GradientAppBar(
+        title: 'Admin Console',
+        showNotificationIcon: false,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_outline),
+            icon: const Icon(Icons.person_outline, color: Colors.white),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ProfilePage()),
             ),
           ),
-          IconButton(icon: const Icon(Icons.logout), onPressed: _logout),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: _logout,
+          ),
         ],
       ),
       drawer: Drawer(
+        width: 280,
         child: ListView(
+          padding: const EdgeInsets.only(top: 48),
           children: [
-            const DrawerHeader(child: Text('Admin sections')),
-            _tile(0, Icons.people, 'Manage users'),
-            _tile(1, Icons.school, 'Manage courses'),
-            _tile(2, Icons.forum, 'Discussion & issues'),
+            _drawerTile(0, Icons.people, 'Manage users'),
+            _drawerTile(1, Icons.school, 'Manage courses'),
+            _drawerTile(2, Icons.forum, 'Discussion & issues'),
           ],
         ),
       ),
@@ -63,10 +76,10 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
     );
   }
 
-  Widget _tile(int index, IconData icon, String label) {
+  Widget _drawerTile(int index, IconData icon, String label) {
     return ListTile(
-      leading: Icon(icon),
-      title: Text(label),
+      leading: Icon(icon, color: Colors.blue),
+      title: Text(label, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w500)),
       selected: _section == index,
       onTap: () {
         setState(() => _section = index);

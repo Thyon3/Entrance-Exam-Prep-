@@ -1,5 +1,6 @@
 import 'package:finalyearproject/core/constants/util.dart';
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/content/data/content_remote_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -33,30 +34,39 @@ class _TopicConceptPageState extends State<TopicConceptPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody(message: 'Loading notes...');
+    if (_concepts.isEmpty) {
+      return const Center(
+        child: Text('No notes for this topic yet.', style: TextStyle(color: Colors.grey)),
+      );
+    }
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _concepts.length,
       itemBuilder: (context, i) {
         final c = _concepts[i] as Map;
-        final title = c['title']?.toString() ?? 'Concept';
+        final title = c['title']?.toString() ?? 'Note';
         final body = c['content']?.toString() ?? '';
         final img = resolveMediaUrl(c['contentImage']?.toString());
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
-                if (img.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Image.network(img, fit: BoxFit.cover),
-                ],
-                const SizedBox(height: 8),
-                MarkdownBody(data: body.isEmpty ? '_No content_' : body),
+        return FuturexContentCard(
+          title: title,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (img.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(img, fit: BoxFit.cover),
+                ),
+                const SizedBox(height: 12),
               ],
-            ),
+              MarkdownBody(
+                data: body.isEmpty ? '_No content_' : body,
+                styleSheet: MarkdownStyleSheet(
+                  p: const TextStyle(fontSize: 15, height: 1.5),
+                ),
+              ),
+            ],
           ),
         );
       },

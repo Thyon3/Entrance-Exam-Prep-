@@ -1,6 +1,7 @@
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/auth/presentation/pages/welcome_page.dart';
-import 'package:finalyearproject/features/profile/presentation/pages/profile_page.dart';
+import 'package:finalyearproject/features/curriculum/presentation/pages/notifications_page.dart';
 import 'package:finalyearproject/features/student/presentation/pages/student_dashboard_page.dart';
 import 'package:finalyearproject/features/student/presentation/widgets/student_drawer.dart';
 import 'package:flutter/material.dart';
@@ -30,19 +31,21 @@ class _StudentMainLayoutState extends ConsumerState<StudentMainLayout> {
     final user = ref.watch(authProvider).user;
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: StudentDrawer(onLogout: _logout),
-      appBar: AppBar(
-        title: Text('Hello, ${user?.firstName ?? 'Student'}'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ProfilePage()),
-            ),
+      appBar: GradientAppBar(
+        title: 'Hello, ${user?.firstName ?? 'Student'}',
+        showNotificationIcon: true,
+        onNotificationPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const NotificationsPage()),
+        ),
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
-          IconButton(icon: const Icon(Icons.menu), onPressed: () => _scaffoldKey.currentState?.openDrawer()),
-        ],
+        ),
       ),
       body: const StudentDashboardPage(),
     );

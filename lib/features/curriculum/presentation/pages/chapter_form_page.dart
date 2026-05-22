@@ -1,3 +1,5 @@
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -32,20 +34,37 @@ class _ChapterFormPageState extends State<ChapterFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('New chapter')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const GradientAppBar(title: 'New chapter', showNotificationIcon: false),
       body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextField(controller: _name, decoration: const InputDecoration(labelText: 'Chapter name')),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saving ? null : _save,
-              child: _saving
-                  ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Text('Create'),
-            ),
-          ],
+        padding: const EdgeInsets.all(16),
+        child: FuturexContentCard(
+          title: 'Chapter details',
+          child: Column(
+            children: [
+              TextField(
+                controller: _name,
+                decoration: const InputDecoration(
+                  labelText: 'Chapter name',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _saving ? null : _save,
+                  child: _saving
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text('Create'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,3 +1,5 @@
+import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/topic_detail_shell_page.dart';
@@ -32,32 +34,50 @@ class _TopicSearchPageState extends State<TopicSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Search topics')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const GradientAppBar(title: 'Search topics', showNotificationIcon: false),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: Row(
               children: [
+                const Icon(Icons.search, color: Colors.blue),
                 Expanded(
                   child: TextField(
                     controller: _query,
-                    decoration: const InputDecoration(hintText: 'Search...'),
+                    decoration: const InputDecoration(
+                      hintText: 'Search topics...',
+                      border: InputBorder.none,
+                    ),
                     onSubmitted: (_) => _search(),
                   ),
                 ),
-                IconButton(onPressed: _search, icon: const Icon(Icons.search)),
+                IconButton(onPressed: _search, icon: const Icon(Icons.arrow_forward)),
               ],
             ),
           ),
           if (_searching) const LinearProgressIndicator(),
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: _results.length,
               itemBuilder: (context, i) {
                 final t = _results[i];
-                return ListTile(
-                  title: Text(t.topicName),
+                return FuturexSimpleListCard(
+                  title: t.topicName,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(

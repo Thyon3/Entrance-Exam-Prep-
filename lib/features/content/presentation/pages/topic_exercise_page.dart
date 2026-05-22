@@ -1,5 +1,6 @@
-import 'package:finalyearproject/core/constants/app_colors.dart';
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/content/data/content_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -50,50 +51,56 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _exercises.length,
       itemBuilder: (context, i) {
         final ex = _exercises[i] as Map;
         final id = ex['_id']?.toString() ?? '';
         final question = ex['question']?.toString() ?? 'Question';
-        final options = (ex['options'] as List?)?.map((e) => e.toString()).toList() ?? [];
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(question, style: const TextStyle(fontWeight: FontWeight.w600)),
+        final options =
+            (ex['options'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        return FuturexContentCard(
+          title: 'Question ${i + 1}',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(question, style: const TextStyle(fontSize: 15, height: 1.4)),
+              const SizedBox(height: 12),
+              ...options.asMap().entries.map((e) => RadioListTile<int>(
+                    title: Text(e.value),
+                    value: e.key,
+                    groupValue: _selected[id],
+                    onChanged: widget.isStudent
+                        ? (v) {
+                            if (v != null) setState(() => _selected[id] = v);
+                          }
+                        : null,
+                  )),
+              if (widget.isStudent) ...[
                 const SizedBox(height: 8),
-                ...options.asMap().entries.map((e) => RadioListTile<int>(
-                      title: Text(e.value),
-                      value: e.key,
-                      groupValue: _selected[id],
-                      onChanged: widget.isStudent
-                          ? (v) {
-                              if (v != null) setState(() => _selected[id] = v);
-                            }
-                          : null,
-                    )),
-                if (widget.isStudent) ...[
-                  ElevatedButton(
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
                     onPressed: () => _submit(id),
                     child: const Text('Submit answer'),
                   ),
-                  if (_feedback[id] != null)
-                    Text(
+                ),
+                if (_feedback[id] != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
                       _feedback[id]!,
                       style: TextStyle(
                         color: _feedback[id]!.startsWith('Correct')
-                            ? AppColors.success
-                            : AppColors.error,
+                            ? FuturexColors.success
+                            : FuturexColors.error,
                       ),
                     ),
-                ],
+                  ),
               ],
-            ),
+            ],
           ),
         );
       },

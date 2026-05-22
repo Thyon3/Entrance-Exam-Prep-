@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -51,40 +52,54 @@ class _TopicQaPageState extends State<TopicQaPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
-        if (widget.isStudent) ...[
-          TextField(
-            controller: _askController,
-            decoration: const InputDecoration(labelText: 'Ask a question'),
-            maxLines: 3,
+        if (widget.isStudent)
+          FuturexContentCard(
+            title: 'Ask a question',
+            child: Column(
+              children: [
+                TextField(
+                  controller: _askController,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    hintText: 'Type your question...',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(onPressed: _ask, child: const Text('Post question')),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
-          ElevatedButton(onPressed: _ask, child: const Text('Post question')),
-          const SizedBox(height: 16),
-        ],
         ..._questions.map((q) {
           final m = q as Map;
           final qid = m['_id']?.toString() ?? '';
-          return Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(m['questionText']?.toString() ?? '', style: const TextStyle(fontWeight: FontWeight.w600)),
-                  if (!widget.isStudent) ...[
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _answerController,
-                      decoration: const InputDecoration(labelText: 'Your answer'),
+          return FuturexContentCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  m['questionText']?.toString() ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                if (!widget.isStudent) ...[
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _answerController,
+                    decoration: const InputDecoration(
+                      labelText: 'Your answer',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
                     ),
-                    TextButton(onPressed: () => _answer(qid), child: const Text('Submit answer')),
-                  ],
+                  ),
+                  TextButton(onPressed: () => _answer(qid), child: const Text('Submit answer')),
                 ],
-              ),
+              ],
             ),
           );
         }),

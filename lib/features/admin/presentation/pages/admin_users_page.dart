@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/admin/data/admin_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +41,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView.builder(
@@ -50,9 +51,14 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
           final u = _users[i] as Map;
           final id = u['_id']?.toString() ?? '';
           final name = '${u['firstName'] ?? ''} ${u['lastName'] ?? ''}'.trim();
-          return Card(
+          return FuturexContentCard(
             child: ListTile(
-              title: Text(name),
+              contentPadding: EdgeInsets.zero,
+              leading: CircleAvatar(
+                backgroundColor: Colors.blue.shade100,
+                child: Text(name.isNotEmpty ? name[0] : '?'),
+              ),
+              title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text('${u['email']} · ${u['role']} · ${u['status']}'),
               trailing: PopupMenuButton<String>(
                 onSelected: (s) => _setStatus(id, s),

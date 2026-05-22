@@ -1,4 +1,6 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -35,20 +37,26 @@ class _BookmarksPageState extends State<BookmarksPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Bookmarks')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const GradientAppBar(title: 'Bookmarks', showNotificationIcon: false),
       body: _loading
-          ? const LoadingView()
+          ? const FuturexLoadingBody()
           : ListView.builder(
+              padding: const EdgeInsets.all(16),
               itemCount: _bookmarks.length,
               itemBuilder: (context, i) {
                 final b = _bookmarks[i] as Map;
                 final id = b['_id']?.toString() ?? '';
-                return ListTile(
-                  title: Text(b['resourceType']?.toString() ?? 'Bookmark'),
-                  subtitle: Text(b['note']?.toString() ?? b['resourceId']?.toString() ?? ''),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () => _remove(id),
+                return FuturexContentCard(
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(Icons.bookmark, color: Colors.blue.shade700),
+                    title: Text(b['resourceType']?.toString() ?? 'Bookmark'),
+                    subtitle: Text(b['note']?.toString() ?? b['resourceId']?.toString() ?? ''),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      onPressed: () => _remove(id),
+                    ),
                   ),
                 );
               },

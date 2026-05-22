@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/widgets/loading_view.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
 
@@ -51,16 +52,22 @@ class _TeacherQaPageState extends State<TeacherQaPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const LoadingView();
+    if (_loading) return const FuturexLoadingBody();
     return DefaultTabController(
       length: 2,
       child: Column(
         children: [
-          const TabBar(
-            tabs: [
-              Tab(text: 'Questions'),
-              Tab(text: 'Issues'),
-            ],
+          Material(
+            color: Colors.white,
+            child: TabBar(
+              labelColor: Colors.blue.shade700,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Colors.blue.shade700,
+              tabs: const [
+                Tab(text: 'Questions'),
+                Tab(text: 'Issues'),
+              ],
+            ),
           ),
           Expanded(
             child: TabBarView(
@@ -70,23 +77,30 @@ class _TeacherQaPageState extends State<TeacherQaPage> {
                   children: _questions.map((q) {
                     final m = q as Map;
                     final id = m['_id']?.toString() ?? '';
-                    return Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(m['questionText']?.toString() ?? ''),
-                            TextField(
-                              controller: _answer,
-                              decoration: const InputDecoration(labelText: 'Answer'),
+                    return FuturexContentCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(m['questionText']?.toString() ?? '',
+                              style: const TextStyle(fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _answer,
+                            decoration: const InputDecoration(
+                              labelText: 'Answer',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                              ),
                             ),
-                            TextButton(
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
                               onPressed: () => _answerQuestion(id),
                               child: const Text('Submit'),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   }).toList(),
@@ -96,8 +110,9 @@ class _TeacherQaPageState extends State<TeacherQaPage> {
                   children: _issues.map((i) {
                     final m = i as Map;
                     final id = m['_id']?.toString() ?? '';
-                    return Card(
+                    return FuturexContentCard(
                       child: ListTile(
+                        contentPadding: EdgeInsets.zero,
                         title: Text(m['description']?.toString() ?? ''),
                         subtitle: Text(m['issueStatus']?.toString() ?? ''),
                         trailing: PopupMenuButton<String>(

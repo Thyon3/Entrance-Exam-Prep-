@@ -1,4 +1,5 @@
-import 'package:finalyearproject/core/constants/app_colors.dart';
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
+import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/content/presentation/pages/topic_concept_page.dart';
 import 'package:finalyearproject/features/content/presentation/pages/topic_exam_page.dart';
 import 'package:finalyearproject/features/content/presentation/pages/topic_exercise_page.dart';
@@ -85,8 +86,8 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
 
   List<Tab> get _tabLabels => [
         const Tab(text: 'Objectives'),
-        const Tab(text: 'Concept'),
-        const Tab(text: 'Video'),
+        const Tab(text: 'Notes'),
+        const Tab(text: 'Videos'),
         const Tab(text: 'Exercise'),
         const Tab(text: 'Quiz'),
         const Tab(text: 'Exam'),
@@ -97,17 +98,25 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.topicName),
-        bottom: TabBar(
-          controller: _tabs,
-          isScrollable: true,
-          tabs: _tabLabels,
-        ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: GradientAppBar(
+        title: widget.topicName,
+        showNotificationIcon: false,
       ),
       body: Column(
         children: [
           if (widget.isStudent) _completionBar(),
+          Material(
+            color: Colors.white,
+            child: TabBar(
+              controller: _tabs,
+              isScrollable: true,
+              labelColor: FuturexColors.primary,
+              unselectedLabelColor: FuturexColors.textSecondary,
+              indicatorColor: FuturexColors.primary,
+              tabs: _tabLabels,
+            ),
+          ),
           Expanded(
             child: TabBarView(
               controller: _tabs,
@@ -120,24 +129,50 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
   }
 
   Widget _completionBar() {
-    final canComplete = _eligibility is Map && (_eligibility['canMarkComplete'] == true);
-    return Material(
-      color: AppColors.card,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (_message != null)
-              Text(_message!, style: TextStyle(color: _message!.contains('complete') ? AppColors.success : AppColors.error)),
-            ElevatedButton(
-              onPressed: canComplete && !_completing ? _markComplete : null,
-              child: _completing
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Text('Mark topic complete'),
+    final canComplete =
+        _eligibility is Map && (_eligibility['canMarkComplete'] == true);
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_message != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                _message!,
+                style: TextStyle(
+                  color: _message!.contains('complete')
+                      ? FuturexColors.success
+                      : FuturexColors.error,
+                  fontSize: 13,
+                ),
+              ),
             ),
-          ],
-        ),
+          ElevatedButton(
+            onPressed: canComplete && !_completing ? _markComplete : null,
+            child: _completing
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Text('Mark topic complete'),
+          ),
+        ],
       ),
     );
   }
