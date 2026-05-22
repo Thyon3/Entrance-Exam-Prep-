@@ -15,49 +15,66 @@ class StudentShellBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: FuturexColors.surface,
-      elevation: 8,
-      shadowColor: Colors.black26,
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const GradeSelectorBar(),
-            NavigationBar(
-              height: 64,
-              backgroundColor: FuturexColors.surface,
-              indicatorColor: FuturexColors.primary.withValues(alpha: 0.12),
-              selectedIndex: currentIndex,
-              onDestinationSelected: onIndexChanged,
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home_rounded),
-                  label: 'Home',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.search_outlined),
-                  selectedIcon: Icon(Icons.search_rounded),
-                  label: 'Search',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.bookmark_outline),
-                  selectedIcon: Icon(Icons.bookmark_rounded),
-                  label: 'Saved',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.person_outline),
-                  selectedIcon: Icon(Icons.person_rounded),
-                  label: 'Profile',
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const GradeSelectorBar(),
+        SafeArea(
+          top: false,
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            decoration: BoxDecoration(
+              color: FuturexColors.surface,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
-          ],
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: NavigationBar(
+                height: 64,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                indicatorColor: FuturexColors.primary.withValues(alpha: 0.08),
+                selectedIndex: currentIndex,
+                onDestinationSelected: onIndexChanged,
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.home_outlined),
+                    selectedIcon: Icon(Icons.home_rounded),
+                    label: 'Home',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.search_outlined),
+                    selectedIcon: Icon(Icons.search_rounded),
+                    label: 'Search',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.bookmark_outline),
+                    selectedIcon: Icon(Icons.bookmark_rounded),
+                    label: 'Saved',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.person_outline),
+                    selectedIcon: Icon(Icons.person_rounded),
+                    label: 'Profile',
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -65,5 +82,5 @@ class StudentShellBottomBar extends StatelessWidget {
 /// Reserve space above the student bottom shell (grade bar + nav).
 double studentShellBottomInset(BuildContext context) {
   final bottom = MediaQuery.paddingOf(context).bottom;
-  return 152 + bottom;
+  return 172 + bottom;
 }

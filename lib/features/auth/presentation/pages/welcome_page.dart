@@ -2,6 +2,7 @@ import 'package:finalyearproject/features/auth/presentation/pages/login_page.dar
 import 'package:finalyearproject/features/auth/presentation/pages/register_page.dart';
 import 'package:finalyearproject/features/auth/presentation/theme/auth_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -21,16 +22,24 @@ class WelcomePage extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-              top: 100,
-              left: -50,
-              child: _BlurCircle(
-                color: AuthTheme.neonGreen.withValues(alpha: 0.1),
-                size: 300,
+              top: -50,
+              left: -100,
+              child: const _BlurCircle(
+                color: AuthTheme.neonGreen,
+                size: 350,
+              ),
+            ),
+            Positioned(
+              bottom: 50,
+              right: -100,
+              child: const _BlurCircle(
+                color: Color(0xFF06B6D4),
+                size: 350,
               ),
             ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   children: [
                     const Spacer(flex: 2),
@@ -39,9 +48,17 @@ class WelcomePage extends StatelessWidget {
                       width: 120,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AuthTheme.neonGreen.withValues(alpha: 0.2),
+                            const Color(0xFF06B6D4).withValues(alpha: 0.1),
+                          ],
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: AuthTheme.neonGreen.withValues(alpha: 0.2),
+                            color: AuthTheme.neonGreen.withValues(alpha: 0.25),
                             blurRadius: 40,
                             spreadRadius: 5,
                           ),
@@ -49,30 +66,34 @@ class WelcomePage extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.school_rounded,
-                        size: 80,
-                        color: AuthTheme.neonGreen,
+                        size: 64,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 40),
-                    const Text(
+                    Text(
                       'Entrance Exam Prep',
-                      style: TextStyle(
+                      style: GoogleFonts.outfit(
                         color: Colors.white,
-                        fontSize: 34,
+                        fontSize: 36,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
+                        letterSpacing: -1,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 12),
-                    const Text(
+                    const SizedBox(height: 16),
+                    Text(
                       'Prepare for Grade 12 entrance exams with lessons, quizzes, and your AI study assistant.',
-                      style: TextStyle(color: Colors.white38, fontSize: 13, height: 1.4),
+                      style: GoogleFonts.plusJakartaSans(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const Spacer(flex: 3),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
+                      width: double.infinity,
                       child: ElevatedButton(
                         style: AuthTheme.welcomeFilledStyle(context),
                         onPressed: () => Navigator.push(
@@ -82,9 +103,9 @@ class WelcomePage extends StatelessWidget {
                         child: const Text('Create Account'),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
+                      width: double.infinity,
                       child: ElevatedButton(
                         style: AuthTheme.welcomeOutlinedStyle(context),
                         onPressed: () => Navigator.push(
@@ -94,7 +115,7 @@ class WelcomePage extends StatelessWidget {
                         child: const Text('Login'),
                       ),
                     ),
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 60),
                   ],
                 ),
               ),
@@ -116,7 +137,17 @@ class _BlurCircle extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: 0.03),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.12),
+            blurRadius: size / 2,
+            spreadRadius: size / 4,
+          ),
+        ],
+      ),
     );
   }
 }

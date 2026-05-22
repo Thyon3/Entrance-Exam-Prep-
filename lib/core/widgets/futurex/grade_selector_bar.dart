@@ -91,20 +91,20 @@ class GradeSelectorBar extends ConsumerWidget {
                               : null,
                           color: isSelected
                               ? null
-                              : FuturexColors.scaffoldBg,
-                          borderRadius: BorderRadius.circular(12),
+                              : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isSelected
                                 ? Colors.transparent
-                                : Colors.black.withValues(alpha: 0.08),
+                                : const Color(0xFFE2E8F0),
                           ),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
                                     color: FuturexColors.primary
-                                        .withValues(alpha: 0.35),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
+                                        .withValues(alpha: 0.3),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
                                   ),
                                 ]
                               : null,
@@ -117,7 +117,7 @@ class GradeSelectorBar extends ConsumerWidget {
                             fontWeight: FontWeight.w700,
                             color: isSelected
                                 ? Colors.white
-                                : FuturexColors.textPrimary,
+                                : FuturexColors.textSecondary,
                           ),
                         ),
                       ),

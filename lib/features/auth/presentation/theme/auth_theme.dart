@@ -3,21 +3,22 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// Nexa-style auth palette (matches nexatrackerprod auth screens).
 class AuthTheme {
-  static const Color darkBlue = Color(0xFF123D6A);
-  static const Color primaryBlue = Color(0xFF2378D0);
-  static const Color green = Color(0xFF27AE60);
-  static const Color primaryGreen = Color(0xFF4DBC81);
-  static const Color bgGradientStart = Color(0xFF001A14);
-  static const Color bgGradientEnd = Color(0xFF003D33);
-  static const Color neonGreen = Color(0xFF00FFA3);
-  static const Color labelColor = Color(0xCC123D6A);
-  static const Color hintColor = Color(0x99123D6A);
-  static const Color fieldBorder = Color(0x1A2378D0);
+  static const Color darkBlue = Color(0xFF4F46E5);
+  static const Color primaryBlue = Color(0xFF6366F1);
+  static const Color green = Color(0xFF4F46E5);
+  static const Color primaryGreen = Color(0xFF818CF8);
+  static const Color bgGradientStart = Color(0xFF0B0F19);
+  static const Color bgGradientEnd = Color(0xFF1E1B4B);
+  static const Color neonGreen = Color(0xFF818CF8);
+  static const Color labelColor = Color(0xFF0F172A);
+  static const Color hintColor = Color(0x99475569);
+  static const Color fieldBorder = Color(0x1F4F46E5);
 
   static TextStyle titleOnBg(BuildContext context) => GoogleFonts.outfit(
         color: Colors.white,
-        fontSize: 25,
-        fontWeight: FontWeight.w500,
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
       );
 
   static TextStyle headlineOnBg(BuildContext context) => GoogleFonts.outfit(
@@ -28,13 +29,13 @@ class AuthTheme {
 
   static TextStyle fieldLabel() => GoogleFonts.outfit(
         color: labelColor,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         fontSize: 15,
       );
 
   static TextStyle footer() => GoogleFonts.outfit(
         fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: primaryGreen,
       );
 
@@ -44,8 +45,8 @@ class AuthTheme {
     Widget? suffixIcon,
   }) {
     final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(40),
-      borderSide: const BorderSide(color: fieldBorder, width: 2),
+      borderRadius: BorderRadius.circular(16),
+      borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.5),
     );
     return InputDecoration(
       hintText: hint,
@@ -53,12 +54,14 @@ class AuthTheme {
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: Colors.transparent,
-      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      fillColor: const Color(0xFFF8FAFC),
+      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       enabledBorder: border,
-      focusedBorder: border,
+      focusedBorder: border.copyWith(
+        borderSide: const BorderSide(color: primaryBlue, width: 2),
+      ),
       errorBorder: border.copyWith(
-        borderSide: const BorderSide(color: Colors.red, width: 2),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
       ),
       focusedErrorBorder: border.copyWith(
         borderSide: const BorderSide(color: Colors.red, width: 2),
@@ -68,16 +71,17 @@ class AuthTheme {
 
   static ButtonStyle primaryButtonStyle(BuildContext context) =>
       ElevatedButton.styleFrom(
-        elevation: 0,
+        elevation: 4,
+        shadowColor: darkBlue.withValues(alpha: 0.3),
         backgroundColor: darkBlue,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * .0125,
+          vertical: MediaQuery.of(context).size.height * .0175,
         ),
         textStyle: GoogleFonts.outfit(
           fontSize: 16,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w700,
         ),
       );
 
@@ -85,7 +89,9 @@ class AuthTheme {
       ElevatedButton.styleFrom(
         backgroundColor: green,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        elevation: 6,
+        shadowColor: green.withValues(alpha: 0.35),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * .0175,
         ),
@@ -99,8 +105,8 @@ class AuthTheme {
       ElevatedButton.styleFrom(
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
-        side: const BorderSide(color: Colors.white, width: 1),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        side: const BorderSide(color: Colors.white, width: 1.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * .0175,
         ),

@@ -107,15 +107,16 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
         children: [
           if (widget.isStudent) _completionBar(),
           Container(
-            margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+            margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             decoration: BoxDecoration(
               color: FuturexColors.surface,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -127,7 +128,16 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
               indicatorColor: FuturexColors.primary,
               indicatorWeight: 3,
               dividerColor: Colors.transparent,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              indicatorSize: TabBarIndicatorSize.label,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+                letterSpacing: 0.2,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
               tabs: _tabLabels,
             ),
           ),
@@ -143,8 +153,33 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
   }
 
   Widget _completionBar() {
-    final canComplete =
-        _eligibility is Map && (_eligibility['canMarkComplete'] == true);
+    if (_eligibility == null) return const SizedBox.shrink();
+
+    final isMap = _eligibility is Map;
+    if (!isMap) return const SizedBox.shrink();
+
+    final eligible = _eligibility['eligible'] == true;
+    final displayMsg = _message ?? _eligibility['message'] as String? ?? '';
+    final isDone = _message != null && _message!.toLowerCase().contains('complete');
+
+    Color bannerColor;
+    IconData bannerIcon;
+    Color iconColor;
+
+    if (isDone) {
+      bannerColor = FuturexColors.success.withValues(alpha: 0.08);
+      bannerIcon = Icons.check_circle_rounded;
+      iconColor = FuturexColors.success;
+    } else if (eligible) {
+      bannerColor = FuturexColors.primary.withValues(alpha: 0.08);
+      bannerIcon = Icons.stars_rounded;
+      iconColor = FuturexColors.primary;
+    } else {
+      bannerColor = Colors.orange.withValues(alpha: 0.08);
+      bannerIcon = Icons.lock_outline_rounded;
+      iconColor = Colors.orange;
+    }
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -152,40 +187,97 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
       decoration: BoxDecoration(
         color: FuturexColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        border: Border.all(
+          color: isDone 
+              ? FuturexColors.success.withValues(alpha: 0.3)
+              : eligible
+                  ? FuturexColors.primary.withValues(alpha: 0.3)
+                  : Colors.orange.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: FuturexColors.primary.withValues(alpha: 0.08),
-            blurRadius: 12,
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (_message != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                _message!,
-                style: TextStyle(
-                  color: _message!.contains('complete')
-                      ? FuturexColors.success
-                      : FuturexColors.error,
-                  fontSize: 13,
-                ),
-              ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: bannerColor,
+              shape: BoxShape.circle,
             ),
-          ElevatedButton(
-            onPressed: canComplete && !_completing ? _markComplete : null,
-            child: _completing
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : const Text('Mark topic complete'),
+            child: Icon(bannerIcon, color: iconColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isDone 
+                      ? 'Topic Completed!' 
+                      : eligible 
+                          ? 'Ready for Completion' 
+                          : 'Prerequisite Locked',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: isDone 
+                        ? FuturexColors.success 
+                        : eligible 
+                            ? FuturexColors.primary 
+                            : FuturexColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  displayMsg,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: FuturexColors.textSecondary,
+                    height: 1.35,
+                  ),
+                ),
+                if (eligible && !isDone) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: !_completing ? _markComplete : null,
+                      child: _completing
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'Complete Topic',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),

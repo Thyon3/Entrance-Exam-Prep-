@@ -60,9 +60,9 @@ class StudentDrawer extends ConsumerWidget {
           Container(
             padding: EdgeInsets.fromLTRB(
               20,
-              MediaQuery.paddingOf(context).top + 20,
+              MediaQuery.paddingOf(context).top + 24,
               20,
-              24,
+              28,
             ),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -71,39 +71,51 @@ class StudentDrawer extends ConsumerWidget {
                 colors: [FuturexColors.gradientStart, FuturexColors.gradientEnd],
               ),
               borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(28),
+                bottomRight: Radius.circular(32),
               ),
             ),
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 36,
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  child: Text(
-                    initial,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      width: 4,
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(2),
+                  child: CircleAvatar(
+                    radius: 36,
+                    backgroundColor: Colors.white,
+                    child: Text(
+                      initial,
+                      style: const TextStyle(
+                        color: FuturexColors.primary,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 const Text(
                   'Entrance Exam Prep',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
+                    letterSpacing: -0.2,
                   ),
                 ),
                 if (user != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     user.fullName,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.95),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -111,7 +123,7 @@ class StudentDrawer extends ConsumerWidget {
                   Text(
                     user.email,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.75),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 12,
                     ),
                     textAlign: TextAlign.center,

@@ -24,11 +24,11 @@ class FuturexContentCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: FuturexColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
         boxShadow: [
           BoxShadow(
-            color: FuturexColors.primary.withValues(alpha: 0.06),
-            blurRadius: 12,
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
@@ -44,7 +44,8 @@ class FuturexContentCard extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: FuturexColors.primaryDark,
+                  color: FuturexColors.textPrimary,
+                  letterSpacing: -0.2,
                 ),
               ),
               const SizedBox(height: 14),

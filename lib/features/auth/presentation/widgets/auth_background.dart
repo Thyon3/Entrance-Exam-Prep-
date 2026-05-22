@@ -12,7 +12,7 @@ class AuthBackground extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: const BoxDecoration(color: Color(0xFF123D6A)),
+      decoration: const BoxDecoration(color: Color(0xFF0B0F19)),
       child: Stack(
         alignment: Alignment.center,
         fit: StackFit.expand,
@@ -28,9 +28,9 @@ class AuthBackground extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF0A1628),
-                      Color(0xFF123D6A),
-                      Color(0xFF1a0a2e),
+                      Color(0xFF0B0F19),
+                      Color(0xFF1E1B4B),
+                      Color(0xFF0F172A),
                     ],
                   ),
                 ),

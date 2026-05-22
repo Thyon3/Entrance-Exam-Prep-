@@ -57,16 +57,20 @@ class FuturexSubjectCard extends StatelessWidget {
       child: Material(
         color: FuturexColors.surface,
         borderRadius: BorderRadius.circular(20),
-        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
           child: Ink(
             decoration: BoxDecoration(
+              color: FuturexColors.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+              border: Border.all(
+                color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+                width: 1.5,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: col.withValues(alpha: 0.15),
+                  color: const Color(0xFF0F172A).withValues(alpha: 0.04),
                   blurRadius: 16,
                   offset: const Offset(0, 6),
                 ),
@@ -75,16 +79,8 @@ class FuturexSubjectCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  height: 8,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [col, col.withValues(alpha: 0.6)],
-                    ),
-                  ),
-                ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
                   child: Row(
                     children: [
                       Container(
@@ -95,11 +91,15 @@ class FuturexSubjectCard extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              col.withValues(alpha: 0.2),
-                              col.withValues(alpha: 0.08),
+                              col.withValues(alpha: 0.15),
+                              col.withValues(alpha: 0.05),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: col.withValues(alpha: 0.1),
+                            width: 1,
+                          ),
                         ),
                         child: Icon(ic, color: col, size: 28),
                       ),
@@ -122,7 +122,8 @@ class FuturexSubjectCard extends StatelessWidget {
                                 subtitle!,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Colors.grey.shade600,
+                                  color: FuturexColors.textSecondary,
+                                  fontWeight: FontWeight.w500,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -131,17 +132,24 @@ class FuturexSubjectCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 16,
-                        color: Colors.grey.shade400,
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 14,
+                          color: FuturexColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 if (progress != null) ...[
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -152,27 +160,27 @@ class FuturexSubjectCard extends StatelessWidget {
                               'Progress',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey.shade600,
-                                fontWeight: FontWeight.w500,
+                                color: FuturexColors.textSecondary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             Text(
                               '${pct.toStringAsFixed(0)}%',
                               style: TextStyle(
                                 fontSize: 12,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                                 color: col,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 8),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(6),
                           child: LinearProgressIndicator(
                             value: pct / 100,
-                            minHeight: 8,
-                            backgroundColor: Colors.grey.shade200,
+                            minHeight: 6,
+                            backgroundColor: const Color(0xFFE2E8F0),
                             color: col,
                           ),
                         ),

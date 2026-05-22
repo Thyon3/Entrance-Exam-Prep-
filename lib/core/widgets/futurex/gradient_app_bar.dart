@@ -1,5 +1,6 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Gradient top app bar used across the app.
 ///
@@ -67,10 +68,11 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: GoogleFonts.outfit(
               color: Colors.white,
               fontWeight: FontWeight.w800,
-              fontSize: 18,
+              fontSize: 19,
+              letterSpacing: -0.2,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -78,10 +80,10 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (hasSubtitle)
             Text(
               subtitle!,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.88),
+              style: GoogleFonts.plusJakartaSans(
+                color: Colors.white.withValues(alpha: 0.85),
                 fontSize: 12,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -101,13 +103,20 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       centerTitle: true,
       flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [FuturexColors.gradientStart, FuturexColors.gradientEnd],
           ),
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: FuturexColors.primary.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
       ),
     );
