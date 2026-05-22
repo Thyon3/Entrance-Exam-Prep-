@@ -1,3 +1,5 @@
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_list_card.dart';
 import 'package:flutter/material.dart';
 
 class FuturexSubjectCard extends StatelessWidget {
@@ -22,131 +24,268 @@ class FuturexSubjectCard extends StatelessWidget {
 
   static IconData iconForSubject(String name) {
     final n = name.toLowerCase();
-    if (n.contains('math')) return Icons.calculate;
-    if (n.contains('english')) return Icons.menu_book;
-    if (n.contains('physics')) return Icons.science;
-    if (n.contains('chemistry')) return Icons.auto_awesome;
-    if (n.contains('biology')) return Icons.eco;
-    if (n.contains('geography')) return Icons.public;
-    if (n.contains('history')) return Icons.history;
-    return Icons.school;
+    if (n.contains('math')) return Icons.calculate_rounded;
+    if (n.contains('english')) return Icons.menu_book_rounded;
+    if (n.contains('physics')) return Icons.science_rounded;
+    if (n.contains('chemistry')) return Icons.biotech_rounded;
+    if (n.contains('biology')) return Icons.eco_rounded;
+    if (n.contains('geography')) return Icons.public_rounded;
+    if (n.contains('history')) return Icons.history_edu_rounded;
+    return Icons.school_rounded;
   }
 
   static Color colorForSubject(String name) {
     final n = name.toLowerCase();
-    if (n.contains('math')) return Colors.blue;
-    if (n.contains('english')) return Colors.purple;
-    if (n.contains('physics')) return Colors.green;
-    if (n.contains('chemistry')) return Colors.orange;
-    if (n.contains('biology')) return Colors.pink;
-    if (n.contains('geography')) return Colors.teal;
-    if (n.contains('history')) return Colors.brown;
-    return Colors.blue;
+    if (n.contains('math')) return const Color(0xFF1565C0);
+    if (n.contains('english')) return const Color(0xFF6A1B9A);
+    if (n.contains('physics')) return const Color(0xFF2E7D32);
+    if (n.contains('chemistry')) return const Color(0xFFE65100);
+    if (n.contains('biology')) return const Color(0xFFC2185B);
+    if (n.contains('geography')) return const Color(0xFF00695C);
+    if (n.contains('history')) return const Color(0xFF5D4037);
+    return FuturexColors.primary;
   }
 
   @override
   Widget build(BuildContext context) {
     final ic = leadingIcon ?? iconForSubject(title);
     final col = iconColor ?? colorForSubject(title);
+    final pct = progress?.clamp(0, 100) ?? 0;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: imageUrl != null && imageUrl!.isNotEmpty
-                  ? Image.network(
-                      imageUrl!,
-                      height: 120,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _heroPlaceholder(ic, col),
-                    )
-                  : _heroPlaceholder(ic, col),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Material(
+        color: FuturexColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+              boxShadow: [
+                BoxShadow(
+                  color: col.withValues(alpha: 0.15),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: col.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [col, col.withValues(alpha: 0.6)],
                     ),
-                    child: Icon(ic, color: col, size: 28),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              col.withValues(alpha: 0.2),
+                              col.withValues(alpha: 0.08),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(ic, color: col, size: 28),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800,
+                                color: FuturexColors.textPrimary,
+                              ),
+                            ),
+                            if (subtitle != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                subtitle!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey.shade600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 16,
+                        color: Colors.grey.shade400,
+                      ),
+                    ],
+                  ),
+                ),
+                if (progress != null) ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF212121),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Progress',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              '${pct.toStringAsFixed(0)}%',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: col,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: LinearProgressIndicator(
+                            value: pct / 100,
+                            minHeight: 8,
+                            backgroundColor: Colors.grey.shade200,
+                            color: col,
                           ),
                         ),
-                        if (subtitle != null) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            subtitle!,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade700,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                        if (progress != null) ...[
-                          const SizedBox(height: 8),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: (progress!.clamp(0, 100)) / 100,
-                              minHeight: 6,
-                              backgroundColor: Colors.grey.shade200,
-                              color: const Color(0xFF388E3C),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${progress!.toStringAsFixed(0)}% complete',
-                            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                          ),
-                        ],
                       ],
                     ),
                   ),
-                  Icon(Icons.chevron_right, color: Colors.grey.shade400),
                 ],
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _heroPlaceholder(IconData ic, Color col) {
-    return Container(
-      height: 120,
-      color: col.withValues(alpha: 0.1),
-      child: Icon(ic, color: col, size: 48),
+/// Chapter row with optional index badge and progress.
+class FuturexChapterCard extends StatelessWidget {
+  const FuturexChapterCard({
+    super.key,
+    required this.title,
+    required this.index,
+    this.progress,
+    this.accentColor,
+    this.onTap,
+  });
+
+  final String title;
+  final int index;
+  final double? progress;
+  final Color? accentColor;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final col = accentColor ?? FuturexColors.primary;
+
+    return FuturexListCard(
+      title: title,
+      badge: 'Chapter $index',
+      iconColor: col,
+      onTap: onTap,
+      leading: Container(
+        width: 44,
+        height: 44,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [col, col.withValues(alpha: 0.75)],
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          '$index',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+            fontSize: 16,
+          ),
+        ),
+      ),
+      subtitle: progress != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: LinearProgressIndicator(
+                value: progress!.clamp(0, 100) / 100,
+                minHeight: 6,
+                backgroundColor: Colors.grey.shade200,
+                color: FuturexColors.success,
+              ),
+            )
+          : null,
     );
   }
 }
 
+/// Topic row with play/learn affordance.
+class FuturexTopicCard extends StatelessWidget {
+  const FuturexTopicCard({
+    super.key,
+    required this.title,
+    required this.index,
+    this.onTap,
+  });
+
+  final String title;
+  final int index;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return FuturexListCard(
+      title: title,
+      badge: 'Topic $index',
+      onTap: onTap,
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: FuturexColors.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(
+          Icons.play_circle_outline_rounded,
+          color: FuturexColors.primary,
+          size: 26,
+        ),
+      ),
+    );
+  }
+}
+
+/// @deprecated Use [FuturexListCard] — kept for compatibility.
 class FuturexSimpleListCard extends StatelessWidget {
   const FuturexSimpleListCard({
     super.key,
@@ -163,41 +302,11 @@ class FuturexSimpleListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0D47A1),
-                      ),
-                    ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 6),
-                      subtitle!,
-                    ],
-                  ],
-                ),
-              ),
-              trailing ?? Icon(Icons.chevron_right, color: Colors.grey.shade400),
-            ],
-          ),
-        ),
-      ),
+    return FuturexListCard(
+      title: title,
+      subtitle: subtitle,
+      trailing: trailing,
+      onTap: onTap,
     );
   }
 }

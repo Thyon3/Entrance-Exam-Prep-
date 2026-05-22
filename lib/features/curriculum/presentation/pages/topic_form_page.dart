@@ -35,7 +35,7 @@ class _TopicFormPageState extends State<TopicFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const GradientAppBar(title: 'New topic', showNotificationIcon: false),
+      appBar: GradientAppBar(title: 'New topic', showNotificationIcon: false),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: FuturexContentCard(

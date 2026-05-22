@@ -1,5 +1,6 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_section_header.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/features/ai/presentation/widgets/student_chat_bot.dart';
@@ -13,7 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class StudentDashboardPage extends ConsumerStatefulWidget {
-  const StudentDashboardPage({super.key});
+  const StudentDashboardPage({super.key, this.bottomInset = 0});
+
+  final double bottomInset;
 
   @override
   ConsumerState<StudentDashboardPage> createState() => _StudentDashboardPageState();
@@ -83,6 +86,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
 
     if (_loading) return const FuturexLoadingBody();
 
+    final grade = ref.watch(selectedGradeProvider);
     final pct = _gradeProgress is Map
         ? (_gradeProgress['completionPercentage'] as num?)?.toDouble()
         : null;
@@ -92,115 +96,131 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
       children: [
         RefreshIndicator(
           onRefresh: _load,
+          color: FuturexColors.primary,
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, widget.bottomInset + 24),
             children: [
-              _bannerCard(pct, days),
-              const SizedBox(height: 8),
-              const Text(
-                'My Subjects',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: FuturexColors.primaryDark,
-                ),
+              _statsRow(pct, days, grade),
+              FuturexSectionHeader(
+                title: 'My subjects',
+                subtitle: _subjects.isEmpty
+                    ? 'No subjects for Grade $grade yet'
+                    : '${_subjects.length} subject${_subjects.length == 1 ? '' : 's'} · Grade $grade',
               ),
-              const SizedBox(height: 8),
               if (_subjects.isEmpty)
-                const FuturexEmptyState(
+                FuturexEmptyState(
                   title: 'No subjects yet',
-                  message: 'Subjects for your grade will appear here.',
+                  message:
+                      'Try another grade using the selector below, or pull to refresh.',
                   icon: Icons.school_outlined,
-                ),
-              for (final s in _subjects)
-                FuturexSubjectCard(
-                  title: s.subjectName,
-                  subtitle: s.stream != null ? 'Stream: ${s.stream}' : null,
-                  progress: s.progressPercent,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChapterListPage(
-                        subjectId: s.id,
-                        subjectName: s.subjectName,
-                        isStudent: true,
+                  onAction: _load,
+                )
+              else
+                for (final s in _subjects)
+                  FuturexSubjectCard(
+                    title: s.subjectName,
+                    subtitle: s.stream ?? 'Grade $grade',
+                    progress: s.progressPercent,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChapterListPage(
+                          subjectId: s.id,
+                          subjectName: s.subjectName,
+                          isStudent: true,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              const SizedBox(height: 88),
             ],
           ),
         ),
-        const Positioned(right: 16, bottom: 16, child: StudentChatBot()),
+        Positioned(
+          right: 16,
+          bottom: widget.bottomInset + 16,
+          child: const StudentChatBot(),
+        ),
       ],
     );
   }
 
-  Widget _bannerCard(double? pct, int? days) {
+  Widget _statsRow(double? pct, int? days, String grade) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Expanded(child: _statCard(
+            icon: Icons.trending_up_rounded,
+            label: 'Grade $grade',
+            value: '${pct?.toStringAsFixed(0) ?? '0'}%',
+            hint: 'Completion',
+            colors: [FuturexColors.gradientStart, FuturexColors.gradientEnd],
+          )),
+          const SizedBox(width: 12),
+          Expanded(child: _statCard(
+            icon: Icons.local_fire_department_rounded,
+            label: 'Streak',
+            value: '${days ?? 0}',
+            hint: 'Days active',
+            colors: [const Color(0xFFE65100), const Color(0xFFBF360C)],
+          )),
+        ],
+      ),
+    );
+  }
+
+  Widget _statCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required String hint,
+    required List<Color> colors,
+  }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.blue.shade700, Colors.blue.shade900],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: colors,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade900.withValues(alpha: 0.25),
+            color: colors.last.withValues(alpha: 0.35),
             blurRadius: 12,
-            offset: const Offset(0, 6),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Your progress',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-                Text(
-                  '${pct?.toStringAsFixed(0) ?? '0'}%',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Text(
-                  'Grade completion',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
-                ),
-              ],
+          Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: 22),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.85),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          Container(width: 1, height: 48, color: Colors.white.withValues(alpha: 0.24)),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Streak',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-                Text(
-                  '${days ?? 0}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Text(
-                  'days learning',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
-                ),
-              ],
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              height: 1,
+            ),
+          ),
+          Text(
+            hint,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.75),
+              fontSize: 11,
             ),
           ),
         ],

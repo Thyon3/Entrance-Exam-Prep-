@@ -1,24 +1,38 @@
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:flutter/material.dart';
 
-/// White content card used on concept / exercise / QA tabs (Futurex notes style).
+/// White content card used on concept / exercise / QA tabs and forms.
 class FuturexContentCard extends StatelessWidget {
   const FuturexContentCard({
     super.key,
     required this.child,
     this.title,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(20),
+    this.margin = const EdgeInsets.only(bottom: 14),
   });
 
   final Widget child;
   final String? title;
   final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry margin;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      width: double.infinity,
+      margin: margin,
+      decoration: BoxDecoration(
+        color: FuturexColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: FuturexColors.primary.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: padding,
         child: Column(
@@ -29,11 +43,11 @@ class FuturexContentCard extends StatelessWidget {
                 title!,
                 style: const TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0D47A1),
+                  fontWeight: FontWeight.w800,
+                  color: FuturexColors.primaryDark,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
             ],
             child,
           ],

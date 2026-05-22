@@ -106,14 +106,28 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
       body: Column(
         children: [
           if (widget.isStudent) _completionBar(),
-          Material(
-            color: Colors.white,
+          Container(
+            margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+            decoration: BoxDecoration(
+              color: FuturexColors.surface,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: TabBar(
               controller: _tabs,
               isScrollable: true,
               labelColor: FuturexColors.primary,
               unselectedLabelColor: FuturexColors.textSecondary,
               indicatorColor: FuturexColors.primary,
+              indicatorWeight: 3,
+              dividerColor: Colors.transparent,
+              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
               tabs: _tabLabels,
             ),
           ),
@@ -136,13 +150,14 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage>
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: FuturexColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: FuturexColors.primary.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),

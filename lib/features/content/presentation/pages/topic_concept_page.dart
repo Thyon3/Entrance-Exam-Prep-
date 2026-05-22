@@ -1,6 +1,7 @@
 import 'package:finalyearproject/core/constants/util.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/features/content/data/content_remote_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -36,8 +37,10 @@ class _TopicConceptPageState extends State<TopicConceptPage> {
   Widget build(BuildContext context) {
     if (_loading) return const FuturexLoadingBody(message: 'Loading notes...');
     if (_concepts.isEmpty) {
-      return const Center(
-        child: Text('No notes for this topic yet.', style: TextStyle(color: Colors.grey)),
+      return const FuturexEmptyState(
+        title: 'No notes yet',
+        message: 'Concept notes for this topic will appear here.',
+        icon: Icons.article_outlined,
       );
     }
     return ListView.builder(

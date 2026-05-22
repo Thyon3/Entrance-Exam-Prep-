@@ -1,4 +1,6 @@
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_section_header.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
@@ -77,22 +79,25 @@ class _ChapterListPageState extends State<ChapterListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final accent = FuturexSubjectCard.colorForSubject(widget.subjectName);
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GradientAppBar(
         title: widget.subjectName,
+        subtitle: '${_chapters.length} chapters',
         showNotificationIcon: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
+            icon: const Icon(Icons.refresh_rounded, color: Colors.white),
             onPressed: _loading ? null : _load,
           ),
         ],
       ),
       floatingActionButton: widget.isStudent
           ? null
-          : FloatingActionButton(
-              backgroundColor: Colors.blue.shade700,
+          : FloatingActionButton.extended(
+              backgroundColor: FuturexColors.primary,
               onPressed: () async {
                 final ok = await Navigator.push<bool>(
                   context,
@@ -102,16 +107,18 @@ class _ChapterListPageState extends State<ChapterListPage> {
                 );
                 if (ok == true) _load();
               },
-              child: const Icon(Icons.add),
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('Chapter'),
             ),
       body: _loading
           ? const FuturexLoadingBody(message: 'Loading chapters...')
           : RefreshIndicator(
               onRefresh: _load,
+              color: FuturexColors.primary,
               child: _chapters.isEmpty
                   ? ListView(
                       children: const [
-                        SizedBox(height: 120),
+                        SizedBox(height: 80),
                         FuturexEmptyState(
                           title: 'No chapters yet',
                           message: 'Chapters will appear here once added.',
@@ -119,37 +126,34 @@ class _ChapterListPageState extends State<ChapterListPage> {
                         ),
                       ],
                     )
-                  : ListView.builder(
+                  : ListView(
                       padding: const EdgeInsets.all(16),
-                      itemCount: _chapters.length,
-                      itemBuilder: (context, i) {
-                        final c = _chapters[i];
-                        return FuturexSimpleListCard(
-                          title: c.chapterName,
-                          subtitle: widget.isStudent && c.completionPercent != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: LinearProgressIndicator(
-                                    value: c.completionPercent! / 100,
-                                    minHeight: 6,
-                                    backgroundColor: Colors.grey.shade200,
-                                    color: const Color(0xFF388E3C),
-                                  ),
-                                )
-                              : null,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => TopicListPage(
-                                chapterId: c.id,
-                                chapterName: c.chapterName,
-                                subjectId: widget.subjectId,
-                                isStudent: widget.isStudent,
+                      children: [
+                        FuturexSectionHeader(
+                          title: 'Chapters',
+                          subtitle: 'Tap a chapter to view topics',
+                        ),
+                        for (var i = 0; i < _chapters.length; i++)
+                          FuturexChapterCard(
+                            title: _chapters[i].chapterName,
+                            index: i + 1,
+                            progress: widget.isStudent
+                                ? _chapters[i].completionPercent
+                                : null,
+                            accentColor: accent,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => TopicListPage(
+                                  chapterId: _chapters[i].id,
+                                  chapterName: _chapters[i].chapterName,
+                                  subjectId: widget.subjectId,
+                                  isStudent: widget.isStudent,
+                                ),
                               ),
                             ),
                           ),
-                        );
-                      },
+                      ],
                     ),
             ),
     );

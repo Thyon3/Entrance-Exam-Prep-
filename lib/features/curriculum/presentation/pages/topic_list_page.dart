@@ -1,4 +1,6 @@
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_section_header.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
@@ -56,18 +58,19 @@ class _TopicListPageState extends State<TopicListPage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GradientAppBar(
         title: widget.chapterName,
+        subtitle: '${_topics.length} topics',
         showNotificationIcon: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
+            icon: const Icon(Icons.refresh_rounded, color: Colors.white),
             onPressed: _loading ? null : _load,
           ),
         ],
       ),
       floatingActionButton: widget.isStudent
           ? null
-          : FloatingActionButton(
-              backgroundColor: Colors.blue.shade700,
+          : FloatingActionButton.extended(
+              backgroundColor: FuturexColors.primary,
               onPressed: () async {
                 final ok = await Navigator.push<bool>(
                   context,
@@ -77,7 +80,8 @@ class _TopicListPageState extends State<TopicListPage> {
                 );
                 if (ok == true) _load();
               },
-              child: const Icon(Icons.add),
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('Topic'),
             ),
       body: _loading
           ? const FuturexLoadingBody(message: 'Loading topics...')
@@ -87,26 +91,34 @@ class _TopicListPageState extends State<TopicListPage> {
                   message: 'Topics for this chapter will appear here.',
                   icon: Icons.topic_outlined,
                 )
-              : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _topics.length,
-              itemBuilder: (context, i) {
-                final t = _topics[i];
-                return FuturexSimpleListCard(
-                  title: t.topicName,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => TopicDetailShellPage(
-                        topicId: t.id,
-                        topicName: t.topicName,
-                        isStudent: widget.isStudent,
+              : RefreshIndicator(
+                  onRefresh: _load,
+                  color: FuturexColors.primary,
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      const FuturexSectionHeader(
+                        title: 'Topics',
+                        subtitle: 'Open a topic to start learning',
                       ),
-                    ),
+                      for (var i = 0; i < _topics.length; i++)
+                        FuturexTopicCard(
+                          title: _topics[i].topicName,
+                          index: i + 1,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => TopicDetailShellPage(
+                                topicId: _topics[i].id,
+                                topicName: _topics[i].topicName,
+                                isStudent: widget.isStudent,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
     );
   }
 }

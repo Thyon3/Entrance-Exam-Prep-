@@ -1,3 +1,6 @@
+import 'package:finalyearproject/core/constants/futurex_colors.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_section_header.dart';
+import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/auth/presentation/pages/welcome_page.dart';
@@ -28,6 +31,7 @@ class _TeacherMainLayoutState extends ConsumerState<TeacherMainLayout> {
   }
 
   Future<void> _loadSubjects() async {
+    setState(() => _loading = true);
     try {
       final all = await CurriculumRemoteDataSource().getSubjects();
       setState(() {
@@ -54,28 +58,38 @@ class _TeacherMainLayoutState extends ConsumerState<TeacherMainLayout> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GradientAppBar(
         title: _index == 0 ? 'Course Management' : 'Q&A & Issues',
+        subtitle: _index == 0 && !_loading ? '${_subjects.length} subjects' : null,
         showNotificationIcon: false,
+        implyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_outline, color: Colors.white),
+            icon: const Icon(Icons.person_outline_rounded, color: Colors.white),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ProfilePage()),
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.logout_rounded, color: Colors.white),
             onPressed: _logout,
           ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
-        indicatorColor: Colors.red.shade100,
+        indicatorColor: FuturexColors.primary.withValues(alpha: 0.12),
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.menu_book), label: 'Courses'),
-          NavigationDestination(icon: Icon(Icons.forum_outlined), label: 'Q&A'),
+          NavigationDestination(
+            icon: Icon(Icons.menu_book_outlined),
+            selectedIcon: Icon(Icons.menu_book_rounded),
+            label: 'Courses',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.forum_outlined),
+            selectedIcon: Icon(Icons.forum_rounded),
+            label: 'Q&A',
+          ),
         ],
       ),
       body: _index == 0 ? _subjectsTab() : const TeacherQaPage(),
@@ -84,30 +98,34 @@ class _TeacherMainLayoutState extends ConsumerState<TeacherMainLayout> {
 
   Widget _subjectsTab() {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(color: FuturexColors.primary),
+      );
     }
+
+    if (_subjects.isEmpty) {
+      return Center(
+        child: Text(
+          'No subjects available',
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
+        ),
+      );
+    }
+
     return RefreshIndicator(
       onRefresh: _loadSubjects,
-      child: ListView.builder(
+      color: FuturexColors.primary,
+      child: ListView(
         padding: const EdgeInsets.all(16),
-        itemCount: _subjects.length,
-        itemBuilder: (context, i) {
-          final s = _subjects[i];
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.blue.shade100,
-                child: Icon(Icons.school, color: Colors.blue.shade800),
-              ),
-              title: Text(
-                s.subjectName,
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0D47A1)),
-              ),
-              subtitle: Text('Grade ${s.gradeLevel ?? ''}'),
-              trailing: const Icon(Icons.chevron_right),
+        children: [
+          const FuturexSectionHeader(
+            title: 'Subjects',
+            subtitle: 'Select a subject to manage chapters',
+          ),
+          for (final s in _subjects)
+            FuturexSubjectCard(
+              title: s.subjectName,
+              subtitle: s.gradeLevel != null ? 'Grade ${s.gradeLevel}' : null,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -119,8 +137,7 @@ class _TeacherMainLayoutState extends ConsumerState<TeacherMainLayout> {
                 ),
               ),
             ),
-          );
-        },
+        ],
       ),
     );
   }

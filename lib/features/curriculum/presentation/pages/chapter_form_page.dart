@@ -35,7 +35,7 @@ class _ChapterFormPageState extends State<ChapterFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const GradientAppBar(title: 'New chapter', showNotificationIcon: false),
+      appBar: GradientAppBar(title: 'New chapter', showNotificationIcon: false),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: FuturexContentCard(
