@@ -10,6 +10,7 @@ import 'package:finalyearproject/features/content/presentation/pages/topic_video
 import 'package:finalyearproject/features/content/presentation/widgets/topic_module_scaffold.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TopicDetailShellPage extends StatefulWidget {
   const TopicDetailShellPage({
@@ -152,25 +153,39 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 168,
+            expandedHeight: 175,
             pinned: true,
             stretch: true,
             backgroundColor: FuturexColors.gradientEnd,
             foregroundColor: Colors.white,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () => Navigator.maybePop(context),
+            ),
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,
                 StretchMode.blurBackground,
               ],
-              titlePadding: const EdgeInsets.only(left: 16, right: 16, bottom: 14),
+              titlePadding: const EdgeInsets.only(left: 56, right: 16, bottom: 16),
               title: Text(
                 widget.topicName,
-                style: const TextStyle(
+                style: GoogleFonts.outfit(
                   fontWeight: FontWeight.w800,
-                  fontSize: 17,
-                  shadows: [Shadow(blurRadius: 8, color: Colors.black26)],
+                  fontSize: 18,
+                  color: Colors.white,
+                  shadows: const [
+                    Shadow(
+                      blurRadius: 8,
+                      color: Colors.black38,
+                    ),
+                  ],
                 ),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               background: Container(
@@ -188,22 +203,23 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
                   children: [
                     Positioned(
                       right: -30,
-                      top: 20,
+                      top: 10,
                       child: Icon(
                         Icons.school_rounded,
-                        size: 140,
+                        size: 150,
                         color: Colors.white.withValues(alpha: 0.08),
                       ),
                     ),
                     Positioned(
-                      left: 16,
-                      bottom: 52,
+                      left: 56,
+                      bottom: 46,
                       child: Text(
-                        'Learning hub',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                        'EXPLORE LEARNING MODULES',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.8,
                         ),
                       ),
                     ),
@@ -215,32 +231,26 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
           if (widget.isStudent)
             SliverToBoxAdapter(child: _completionBar()),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
             sliver: SliverToBoxAdapter(
               child: Text(
-                'Choose a module',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.6,
-                  color: Colors.grey.shade600,
+                'SUGGESTED PATH',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.2,
+                  color: FuturexColors.textSecondary,
                 ),
               ),
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.92,
-              ),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final m = modules[index];
-                  return TopicModuleCard(
+                  return TopicModuleListTile(
                     title: m.title,
                     subtitle: m.subtitle,
                     style: m.style,
@@ -253,38 +263,6 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
                   );
                 },
                 childCount: modules.length,
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Suggested path',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ...modules.take(5).map((m) {
-                    return TopicModuleListTile(
-                      title: m.title,
-                      subtitle: m.subtitle,
-                      style: m.style,
-                      onTap: () => _openModule(
-                        title: m.title,
-                        style: m.style,
-                        subtitle: m.subtitle,
-                        child: m.child,
-                      ),
-                    );
-                  }),
-                ],
               ),
             ),
           ),
@@ -321,17 +299,17 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
     }
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: FuturexColors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: accent.withValues(alpha: 0.35)),
+        border: Border.all(color: accent.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: accent.withValues(alpha: 0.12),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -340,26 +318,33 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
         children: [
           Row(
             children: [
-              Icon(icon, color: accent, size: 22),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: accent, size: 20),
+              ),
               const SizedBox(width: 10),
               Text(
                 headline,
-                style: TextStyle(
+                style: GoogleFonts.outfit(
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
-                  color: accent,
+                  color: FuturexColors.textPrimary,
                 ),
               ),
             ],
           ),
           if (displayMsg.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               displayMsg,
-              style: TextStyle(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
-                color: Colors.grey.shade700,
-                height: 1.35,
+                color: FuturexColors.textSecondary,
+                height: 1.4,
               ),
             ),
           ],
@@ -367,8 +352,17 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
             const SizedBox(height: 14),
             SizedBox(
               width: double.infinity,
+              height: 46,
               child: FilledButton.icon(
                 onPressed: !_completing ? _markComplete : null,
+                style: FilledButton.styleFrom(
+                  backgroundColor: FuturexColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
                 icon: _completing
                     ? const SizedBox(
                         width: 18,
@@ -379,7 +373,13 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
                         ),
                       )
                     : const Icon(Icons.check_rounded, size: 20),
-                label: Text(_completing ? 'Saving...' : 'Mark topic complete'),
+                label: Text(
+                  _completing ? 'Saving...' : 'Mark topic complete',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+                ),
               ),
             ),
           ],

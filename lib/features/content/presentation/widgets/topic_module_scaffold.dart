@@ -1,6 +1,7 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Full-screen wrapper for a single topic learning module (notes, quiz, etc.).
 class TopicModuleScaffold extends StatelessWidget {
@@ -208,10 +209,17 @@ class TopicModuleListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Material(
         color: FuturexColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Colors.black.withValues(alpha: 0.05),
+            width: 1,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
@@ -223,8 +231,19 @@ class TopicModuleListTile extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: style.gradient),
+                    gradient: LinearGradient(
+                      colors: style.gradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: style.color.withValues(alpha: 0.25),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Icon(style.icon, color: Colors.white, size: 24),
                 ),
@@ -235,22 +254,25 @@ class TopicModuleListTile extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w800,
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w700,
                           fontSize: 15,
+                          color: FuturexColors.textPrimary,
                         ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: FuturexColors.textSecondary,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400),
+                Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400, size: 20),
               ],
             ),
           ),

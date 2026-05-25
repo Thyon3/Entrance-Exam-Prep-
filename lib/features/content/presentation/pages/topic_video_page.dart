@@ -3,9 +3,10 @@ import 'package:finalyearproject/core/utils/youtube_utils.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/features/content/data/content_remote_data_source.dart';
-import 'package:finalyearproject/features/content/presentation/pages/topic_video_player_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class TopicVideoPage extends StatefulWidget {
   const TopicVideoPage({
@@ -26,11 +27,19 @@ class TopicVideoPage extends StatefulWidget {
 class _TopicVideoPageState extends State<TopicVideoPage> {
   List<dynamic> _videos = [];
   bool _loading = true;
+  Map? _selectedVideo;
+  YoutubePlayerController? _controller;
 
   @override
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 
   Future<void> _load() async {
@@ -40,34 +49,64 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
       setState(() {
         _videos = list;
         _loading = false;
+        if (_videos.isNotEmpty) {
+          final firstVideo = _videos.first as Map;
+          final videoUrl = firstVideo['videoUrl']?.toString() ?? '';
+          final videoId = YoutubeUtils.extractVideoId(videoUrl);
+          if (videoId != null) {
+            _selectedVideo = firstVideo;
+            _controller = YoutubePlayerController(
+              initialVideoId: videoId,
+              flags: const YoutubePlayerFlags(
+                autoPlay: false,
+                mute: false,
+                disableDragSeek: false,
+                loop: false,
+                isLive: false,
+                forceHD: false,
+                enableCaption: true,
+              ),
+            );
+          }
+        }
       });
     } catch (_) {
       setState(() => _loading = false);
     }
   }
 
-  Future<void> _openVideo(Map v) async {
-    final title = v['title']?.toString() ?? 'Video';
-    final url = v['videoUrl']?.toString() ?? '';
-    if (url.isEmpty) return;
+  void _playVideo(Map v) {
+    final videoUrl = v['videoUrl']?.toString() ?? '';
+    final videoId = YoutubeUtils.extractVideoId(videoUrl);
 
-    if (YoutubeUtils.isYoutubeUrl(url)) {
-      await Navigator.push<void>(
-        context,
-        MaterialPageRoute(
-          builder: (_) => TopicVideoPlayerPage(
-            videoUrl: url,
-            title: title,
-            topicName: widget.topicName,
-          ),
-        ),
-      );
+    if (videoId == null) {
+      if (videoUrl.isNotEmpty) {
+        launchUrl(Uri.parse(videoUrl), mode: LaunchMode.externalApplication);
+      }
       return;
     }
 
-    final uri = Uri.tryParse(url);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    setState(() {
+      _selectedVideo = v;
+    });
+
+    if (_controller == null) {
+      setState(() {
+        _controller = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: const YoutubePlayerFlags(
+            autoPlay: true,
+            mute: false,
+            disableDragSeek: false,
+            loop: false,
+            isLive: false,
+            forceHD: false,
+            enableCaption: true,
+          ),
+        );
+      });
+    } else {
+      _controller!.load(videoId);
     }
   }
 
@@ -76,7 +115,6 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
     if (_loading) {
       return const FuturexLoadingBody(message: 'Loading videos...');
     }
-
     if (_videos.isEmpty) {
       return const FuturexEmptyState(
         title: 'No videos yet',
@@ -85,131 +123,267 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _load,
-      color: FuturexColors.primary,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _videos.length,
-        itemBuilder: (context, i) {
-          final v = _videos[i] as Map;
-          final title = v['title']?.toString() ?? 'Video';
-          final url = v['videoUrl']?.toString() ?? '';
-          final videoId = YoutubeUtils.extractVideoId(url);
-          final isYoutube = videoId != null;
+    if (_controller == null) {
+      return RefreshIndicator(
+        onRefresh: _load,
+        color: FuturexColors.primary,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: _videos.length,
+          itemBuilder: (context, index) {
+            final v = _videos[index] as Map;
+            return _buildVideoRow(v, index);
+          },
+        ),
+      );
+    }
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: Material(
-              color: FuturexColors.surface,
-              borderRadius: BorderRadius.circular(18),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: url.isNotEmpty ? () => _openVideo(v) : null,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+    return YoutubePlayerBuilder(
+      player: YoutubePlayer(
+        controller: _controller!,
+        showVideoProgressIndicator: true,
+        progressIndicatorColor: FuturexColors.primary,
+      ),
+      builder: (context, player) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Persistent Player Card at the top
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: player,
+                ),
+              ),
+            ),
+            // Currently playing detail
+            if (_selectedVideo != null) _buildCurrentlyPlayingHeader(),
+            const Divider(height: 1, color: Color(0xFFE2E8F0)),
+            // List of videos
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _load,
+                color: FuturexColors.primary,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  itemCount: _videos.length,
+                  itemBuilder: (context, index) {
+                    final v = _videos[index] as Map;
+                    return _buildVideoRow(v, index);
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCurrentlyPlayingHeader() {
+    final title = _selectedVideo?['title']?.toString() ?? 'Selected Lesson';
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: FuturexColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: videoId != null
-                              ? Image.network(
-                                  YoutubeUtils.thumbnailUrl(videoId),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => _thumbFallback(),
-                                )
-                              : _thumbFallback(),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.45),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.play_arrow_rounded,
-                            color: Colors.white,
-                            size: 36,
-                          ),
-                        ),
-                        if (isYoutube)
-                          Positioned(
-                            right: 10,
-                            top: 10,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Text(
-                                'In-app player',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
+                    const Icon(
+                      Icons.play_arrow_rounded,
+                      color: FuturexColors.primary,
+                      size: 14,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  title,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  isYoutube
-                                      ? 'Speed · subtitles · fullscreen'
-                                      : 'Opens externally',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Icon(
-                            Icons.chevron_right_rounded,
-                            color: FuturexColors.primary,
-                          ),
-                        ],
+                    const SizedBox(width: 4),
+                    Text(
+                      'CURRENTLY PLAYING',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: FuturexColors.primary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: GoogleFonts.outfit(
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+              color: FuturexColors.textPrimary,
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _thumbFallback() {
+  Widget _buildVideoRow(Map v, int index) {
+    final title = v['title']?.toString() ?? 'Untitled Lesson';
+    final url = v['videoUrl']?.toString() ?? '';
+    final videoId = YoutubeUtils.extractVideoId(url);
+    final isYoutube = videoId != null;
+    final isSelected = _selectedVideo == v;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: isSelected ? FuturexColors.primary.withValues(alpha: 0.05) : FuturexColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? FuturexColors.primary : Colors.black.withValues(alpha: 0.06),
+            width: isSelected ? 1.5 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? FuturexColors.primary.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _playVideo(v),
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey.shade200,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: videoId != null
+                              ? Image.network(
+                                  YoutubeUtils.thumbnailUrl(videoId),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => _thumbFallback(small: true),
+                                )
+                              : _thumbFallback(small: true),
+                        ),
+                      ),
+                      Container(
+                        width: 100,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? FuturexColors.primary.withValues(alpha: 0.15)
+                              : Colors.black.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            isSelected ? Icons.volume_up_rounded : Icons.play_arrow_rounded,
+                            color: Colors.white,
+                            size: isSelected ? 20 : 24,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: GoogleFonts.outfit(
+                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                            fontSize: 14,
+                            color: isSelected ? FuturexColors.primary : FuturexColors.textPrimary,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              isYoutube ? Icons.smart_display_rounded : Icons.open_in_new_rounded,
+                              size: 14,
+                              color: isSelected
+                                  ? FuturexColors.primary.withValues(alpha: 0.7)
+                                  : FuturexColors.textSecondary.withValues(alpha: 0.7),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              isYoutube ? 'In-app Player' : 'External Link',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: isSelected
+                                    ? FuturexColors.primary.withValues(alpha: 0.7)
+                                    : FuturexColors.textSecondary.withValues(alpha: 0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: isSelected ? FuturexColors.primary : Colors.grey.shade400,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _thumbFallback({bool small = false}) {
     return Container(
-      color: FuturexColors.primary.withValues(alpha: 0.15),
-      child: const Icon(
+      color: FuturexColors.primary.withValues(alpha: 0.1),
+      child: Icon(
         Icons.movie_rounded,
-        size: 48,
+        size: small ? 24 : 48,
         color: FuturexColors.primary,
       ),
     );

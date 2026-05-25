@@ -21,13 +21,20 @@ dependencies:
   url_launcher: ^6.3.0
   cached_network_image: ^3.4.1
   flutter_markdown: ^0.7.4+1
-  youtube_player_iframe: ^5.2.2
+  youtube_player_flutter: ^9.1.2
   wakelock_plus: ^1.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "lib/assets/images/application_log.png"
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true

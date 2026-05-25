@@ -64,10 +64,12 @@ class WelcomePage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.school_rounded,
-                        size: 64,
-                        color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.asset(
+                          'lib/assets/images/application_log.png',
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),

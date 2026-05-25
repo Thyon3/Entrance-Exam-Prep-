@@ -15,7 +15,7 @@ class AuthFormCard extends StatelessWidget {
   final double cardHeightFactor;
   final double logoBottomFactor;
 
-  static const String logoAsset = 'lib/assets/images/nexalogosize1.png';
+  static const String logoAsset = 'lib/assets/images/application_log.png';
 
   @override
   Widget build(BuildContext context) {
