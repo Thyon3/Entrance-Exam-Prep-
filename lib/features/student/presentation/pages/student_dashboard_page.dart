@@ -141,7 +141,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
           onRefresh: _load,
           color: FuturexColors.primary,
           child: ListView(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, widget.bottomInset + 24),
+            padding: EdgeInsets.fromLTRB(0, 24, 0, widget.bottomInset + 24),
             children: [
               // ── Banner Carousel ──────────────────────────────────────────
               _buildBannerCarousel(),

@@ -90,4 +90,93 @@ class AppTheme {
       ),
     );
   }
+
+  static ThemeData dark() {
+    final base = ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: FuturexColors.primary,
+        brightness: Brightness.dark,
+        primary: FuturexColors.primary,
+        surface: const Color(0xFF0F172A),
+      ),
+      scaffoldBackgroundColor: const Color(0xFF0F172A),
+    );
+    return base.copyWith(
+      textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      cardTheme: CardThemeData(
+        color: const Color(0xFF1E293B),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: const Color(0xFF1E293B),
+        indicatorColor: FuturexColors.primary.withValues(alpha: 0.2),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return TextStyle(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            color: selected ? FuturexColors.primary : Colors.white60,
+          );
+        }),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF1E293B),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: FuturexColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: FuturexColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 4,
+          shadowColor: FuturexColors.primary.withValues(alpha: 0.25),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, letterSpacing: 0.3),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: FuturexColors.primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, letterSpacing: 0.3),
+        ),
+      ),
+      tabBarTheme: const TabBarThemeData(
+        labelColor: FuturexColors.primary,
+        unselectedLabelColor: Colors.white60,
+        indicatorColor: FuturexColors.primary,
+        labelStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+      ),
+      dividerTheme: DividerThemeData(
+        color: Colors.white.withValues(alpha: 0.05),
+        space: 1,
+      ),
+    );
+  }
 }

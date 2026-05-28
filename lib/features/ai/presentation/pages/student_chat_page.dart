@@ -28,10 +28,8 @@ class _StudentChatPageState extends State<StudentChatPage> {
   bool _loading = false;
 
   // ChatGPT Dark slate theme colors
-  static const Color chatBg = Color(0xFF0F172A); // Slate 900
-  static const Color chatCardBg = Color(0xFF1E293B); // Slate 800
+  // Replaced with dynamic theme colors in build()
   static const Color userBubbleBg = Color(0xFF4F46E5); // Indigo 600
-  static const Color inputBg = Color(0xFF1E293B);
 
   @override
   void initState() {
@@ -93,17 +91,22 @@ class _StudentChatPageState extends State<StudentChatPage> {
   }
 
   void _clearChat() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subtextColor = isDark ? Colors.white70 : Colors.black54;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: chatCardBg,
+        backgroundColor: cardColor,
         title: Text(
           'Clear conversation?',
-          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.outfit(color: textColor, fontWeight: FontWeight.bold),
         ),
         content: Text(
           'This will delete all messages in this session.',
-          style: GoogleFonts.plusJakartaSans(color: Colors.white70),
+          style: GoogleFonts.plusJakartaSans(color: subtextColor),
         ),
         actions: [
           TextButton(
@@ -124,13 +127,18 @@ class _StudentChatPageState extends State<StudentChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgCol = Theme.of(context).scaffoldBackgroundColor;
+    final textCol = isDark ? Colors.white : Colors.black87;
+
     return Scaffold(
-      backgroundColor: chatBg,
+      backgroundColor: bgCol,
       appBar: AppBar(
-        backgroundColor: chatBg,
+        backgroundColor: bgCol,
         elevation: 0,
+        iconTheme: IconThemeData(color: textCol),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: textCol, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -148,7 +156,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
             Text(
               'AI Study Partner',
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: textCol,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -159,7 +167,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
         actions: [
           if (_messages.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.delete_outline_rounded, color: Colors.white70),
+              icon: Icon(Icons.delete_outline_rounded, color: isDark ? Colors.white70 : Colors.black54),
               onPressed: _clearChat,
             ),
         ],
@@ -179,6 +187,10 @@ class _StudentChatPageState extends State<StudentChatPage> {
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleCol = isDark ? Colors.white : Colors.black87;
+    final subCol = isDark ? Colors.white60 : Colors.black54;
+    
     final title = widget.topicName ?? 'your studies';
     final suggestion1 = widget.topicName != null
         ? 'Explain "${widget.topicName}" in simple terms'
@@ -203,7 +215,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
             ),
             child: const Icon(
               Icons.smart_toy_rounded,
-              color: Colors.white,
+              color: userBubbleBg,
               size: 48,
             ),
           ),
@@ -212,7 +224,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
             'How can I help with $title?',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              color: Colors.white,
+              color: titleCol,
               fontSize: 22,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.5,
@@ -223,7 +235,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
             'I can explain concepts, quiz you, or solve problems. Try one of the starters below:',
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
-              color: Colors.white60,
+              color: subCol,
               fontSize: 14,
               height: 1.4,
             ),
@@ -239,10 +251,15 @@ class _StudentChatPageState extends State<StudentChatPage> {
   }
 
   Widget _buildSuggestionChip(String prompt, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardCol = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderCol = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05);
+    final textCol = isDark ? Colors.white.withValues(alpha: 0.9) : Colors.black87;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: chatCardBg,
+        color: cardCol,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () => _sendText(prompt),
@@ -251,7 +268,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+              border: Border.all(color: borderCol),
             ),
             child: Row(
               children: [
@@ -261,13 +278,13 @@ class _StudentChatPageState extends State<StudentChatPage> {
                   child: Text(
                     prompt,
                     style: GoogleFonts.plusJakartaSans(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: textCol,
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-                const Icon(Icons.arrow_forward_rounded, color: Colors.white30, size: 16),
+                Icon(Icons.arrow_forward_rounded, color: isDark ? Colors.white30 : Colors.black26, size: 16),
               ],
             ),
           ),
@@ -277,6 +294,12 @@ class _StudentChatPageState extends State<StudentChatPage> {
   }
 
   Widget _buildMessageList() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final aiCardCol = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final aiTextCol = isDark ? Colors.white.withValues(alpha: 0.95) : Colors.black87;
+    final codeBg = isDark ? Colors.black26 : Colors.grey.shade100;
+    final codeCol = isDark ? Colors.amberAccent : Colors.indigo;
+
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -309,13 +332,14 @@ class _StudentChatPageState extends State<StudentChatPage> {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: isUser ? userBubbleBg : chatCardBg,
+                    color: isUser ? userBubbleBg : aiCardCol,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(20),
                       topRight: const Radius.circular(20),
                       bottomLeft: isUser ? const Radius.circular(20) : const Radius.circular(4),
                       bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(20),
                     ),
+                    border: isUser ? null : Border.all(color: Colors.grey.withValues(alpha: 0.2)),
                   ),
                   child: isUser
                       ? Text(
@@ -332,18 +356,18 @@ class _StudentChatPageState extends State<StudentChatPage> {
                           styleSheet: MarkdownStyleSheet(
                             p: GoogleFonts.plusJakartaSans(
                               fontSize: 14.5,
-                              color: Colors.white.withValues(alpha: 0.95),
+                              color: aiTextCol,
                               height: 1.5,
                             ),
-                            h1: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-                            h2: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                            h3: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                            code: const TextStyle(backgroundColor: Colors.black26, color: Colors.amberAccent, fontSize: 13),
+                            h1: GoogleFonts.outfit(color: aiTextCol, fontWeight: FontWeight.bold, fontSize: 18),
+                            h2: GoogleFonts.outfit(color: aiTextCol, fontWeight: FontWeight.bold, fontSize: 16),
+                            h3: GoogleFonts.outfit(color: aiTextCol, fontWeight: FontWeight.bold, fontSize: 14),
+                            code: TextStyle(backgroundColor: codeBg, color: codeCol, fontSize: 13),
                             codeblockDecoration: BoxDecoration(
-                              color: Colors.black38,
+                              color: codeBg,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            listBullet: GoogleFonts.plusJakartaSans(color: Colors.white70),
+                            listBullet: GoogleFonts.plusJakartaSans(color: aiTextCol),
                           ),
                         ),
                 ),
@@ -357,6 +381,9 @@ class _StudentChatPageState extends State<StudentChatPage> {
   }
 
   Widget _buildTypingIndicator() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardCol = isDark ? const Color(0xFF1E293B) : Colors.white;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 4, 24, 12),
       child: Align(
@@ -376,8 +403,9 @@ class _StudentChatPageState extends State<StudentChatPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: chatCardBg,
+                color: cardCol,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
               ),
               child: SizedBox(
                 width: 36,
@@ -394,28 +422,35 @@ class _StudentChatPageState extends State<StudentChatPage> {
   }
 
   Widget _buildInputArea() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgCol = Theme.of(context).scaffoldBackgroundColor;
+    final inputCol = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderCol = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.withValues(alpha: 0.2);
+    final textCol = isDark ? Colors.white : Colors.black87;
+    final hintCol = isDark ? Colors.white38 : Colors.black38;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: chatBg,
-        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
+        color: bgCol,
+        border: Border(top: BorderSide(color: borderCol)),
       ),
       child: Row(
         children: [
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: inputBg,
+                color: inputCol,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                border: Border.all(color: borderCol),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
                 controller: _controller,
-                style: const TextStyle(color: Colors.white, fontSize: 14.5),
-                decoration: const InputDecoration(
+                style: TextStyle(color: textCol, fontSize: 14.5),
+                decoration: InputDecoration(
                   hintText: 'Ask anything...',
-                  hintStyle: TextStyle(color: Colors.white38),
+                  hintStyle: TextStyle(color: hintCol),
                   border: InputBorder.none,
                 ),
                 onSubmitted: (_) => _submit(),
@@ -470,13 +505,14 @@ class _PulsingDotState extends State<_PulsingDot> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return FadeTransition(
       opacity: _animation,
       child: Container(
         width: 6,
         height: 6,
-        decoration: const BoxDecoration(
-          color: Colors.white70,
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white70 : Colors.black54,
           shape: BoxShape.circle,
         ),
       ),
