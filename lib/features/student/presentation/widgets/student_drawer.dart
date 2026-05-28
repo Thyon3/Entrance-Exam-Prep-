@@ -2,6 +2,7 @@ import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/my_reports_page.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/notifications_page.dart';
+import 'package:finalyearproject/shared/providers/grade_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -47,6 +48,7 @@ class StudentDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider).user;
+    final selectedGrade = ref.watch(selectedGradeProvider);
     final initial = user?.firstName.isNotEmpty == true
         ? user!.firstName[0].toUpperCase()
         : 'S';
@@ -154,6 +156,66 @@ class StudentDrawer extends ConsumerWidget {
                   icon: Icons.home_rounded,
                   label: 'Home',
                   onTap: () => Navigator.pop(context),
+                ),
+                Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: ExpansionTile(
+                      shape: const Border(),
+                      clipBehavior: Clip.none,
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: FuturexColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.school_rounded, color: FuturexColors.primary, size: 22),
+                      ),
+                      title: const Text(
+                        'Select Grade',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: FuturexColors.textPrimary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Grade $selectedGrade',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: FuturexColors.textSecondary.withValues(alpha: 0.8),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      childrenPadding: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
+                      children: gradeItems.map((g) {
+                        final isSelected = selectedGrade == g;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: ListTile(
+                            dense: true,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            tileColor: isSelected ? FuturexColors.primary.withValues(alpha: 0.08) : null,
+                            title: Text(
+                              'Grade $g',
+                              style: TextStyle(
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                color: isSelected ? FuturexColors.primary : FuturexColors.textPrimary,
+                                fontSize: 14,
+                              ),
+                            ),
+                            trailing: isSelected ? const Icon(Icons.check_circle_rounded, color: FuturexColors.primary, size: 18) : null,
+                            onTap: () {
+                              ref.read(selectedGradeProvider.notifier).setGrade(g);
+                              Navigator.pop(context); // Close drawer
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
                 _tile(
                   context,

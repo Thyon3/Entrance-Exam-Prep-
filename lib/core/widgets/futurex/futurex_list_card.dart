@@ -1,5 +1,6 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Modern tappable row card for chapters, topics, bookmarks, etc.
 class FuturexListCard extends StatelessWidget {
@@ -84,11 +85,11 @@ class FuturexListCard extends StatelessWidget {
                         ],
                         Text(
                           title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w600,
                             color: FuturexColors.textPrimary,
-                            height: 1.25,
+                            height: 1.3,
                           ),
                         ),
                         if (subtitle != null) ...[

@@ -1,5 +1,4 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
-import 'package:finalyearproject/core/widgets/futurex/grade_selector_bar.dart';
 import 'package:flutter/material.dart';
 
 /// Bottom area: grade selector + main navigation for the student shell.
@@ -18,7 +17,6 @@ class StudentShellBottomBar extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const GradeSelectorBar(),
         SafeArea(
           top: false,
           child: Container(
@@ -79,8 +77,8 @@ class StudentShellBottomBar extends StatelessWidget {
   }
 }
 
-/// Reserve space above the student bottom shell (grade bar + nav).
+/// Reserve space above the student bottom shell (nav only).
 double studentShellBottomInset(BuildContext context) {
   final bottom = MediaQuery.paddingOf(context).bottom;
-  return 172 + bottom;
+  return 88 + bottom;
 }
