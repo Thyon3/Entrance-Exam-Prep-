@@ -6,9 +6,11 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/features/ai/presentation/widgets/student_chat_bot.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/chapter_list_page.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:finalyearproject/features/student/presentation/pages/streak_detail_page.dart';
 import 'package:finalyearproject/shared/providers/grade_provider.dart';
@@ -84,8 +86,8 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
     try {
       final grade = ref.read(selectedGradeProvider);
       final user = ref.read(authProvider).user;
-      final curriculum = CurriculumRemoteDataSource();
-      final engagement = EngagementRemoteDataSource();
+      final curriculum = ref.read(curriculumRemoteDataSourceProvider);
+      final engagement = ref.read(engagementRemoteDataSourceProvider);
       final all = await curriculum.getSubjects();
       final progressList = await engagement.getSubjectProgress();
       final progressMap = <String, dynamic>{};
