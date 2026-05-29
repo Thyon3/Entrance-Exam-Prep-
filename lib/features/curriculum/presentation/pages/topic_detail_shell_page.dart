@@ -8,11 +8,13 @@ import 'package:finalyearproject/features/content/presentation/pages/topic_quiz_
 import 'package:finalyearproject/features/content/presentation/pages/topic_reports_page.dart';
 import 'package:finalyearproject/features/content/presentation/pages/topic_video_page.dart';
 import 'package:finalyearproject/features/content/presentation/widgets/topic_module_scaffold.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class TopicDetailShellPage extends StatefulWidget {
+class TopicDetailShellPage extends ConsumerStatefulWidget {
   const TopicDetailShellPage({
     super.key,
     required this.topicId,
@@ -25,10 +27,10 @@ class TopicDetailShellPage extends StatefulWidget {
   final bool isStudent;
 
   @override
-  State<TopicDetailShellPage> createState() => _TopicDetailShellPageState();
+  ConsumerState<TopicDetailShellPage> createState() => _TopicDetailShellPageState();
 }
 
-class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
+class _TopicDetailShellPageState extends ConsumerState<TopicDetailShellPage> {
   dynamic _eligibility;
   bool _completing = false;
   String? _message;
@@ -42,7 +44,7 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
   Future<void> _loadEligibility() async {
     try {
       final data =
-          await EngagementRemoteDataSource().getTopicEligibility(widget.topicId);
+          await ref.read(engagementRemoteDataSourceProvider).getTopicEligibility(widget.topicId);
       if (mounted) setState(() => _eligibility = data);
     } catch (_) {}
   }
@@ -53,7 +55,7 @@ class _TopicDetailShellPageState extends State<TopicDetailShellPage> {
       _message = null;
     });
     try {
-      await EngagementRemoteDataSource().markTopicComplete(widget.topicId);
+      await ref.read(engagementRemoteDataSourceProvider).markTopicComplete(widget.topicId);
       await _loadEligibility();
       setState(() => _message = 'Topic marked complete.');
     } catch (e) {
