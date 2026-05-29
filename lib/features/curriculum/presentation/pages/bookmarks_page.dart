@@ -3,20 +3,22 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_list_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BookmarksPage extends StatefulWidget {
+class BookmarksPage extends ConsumerStatefulWidget {
   const BookmarksPage({super.key, this.embedded = false, this.bottomInset = 0});
 
   final bool embedded;
   final double bottomInset;
 
   @override
-  State<BookmarksPage> createState() => _BookmarksPageState();
+  ConsumerState<BookmarksPage> createState() => _BookmarksPageState();
 }
 
-class _BookmarksPageState extends State<BookmarksPage> {
+class _BookmarksPageState extends ConsumerState<BookmarksPage> {
   List<dynamic> _bookmarks = [];
   bool _loading = true;
 
@@ -29,7 +31,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
   Future<void> _load() async {
     setState(() => _loading = true);
     try {
-      final list = await EngagementRemoteDataSource().getBookmarks();
+      final list = await ref.read(engagementRemoteDataSourceProvider).getBookmarks();
       setState(() {
         _bookmarks = list;
         _loading = false;
@@ -40,7 +42,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
   }
 
   Future<void> _remove(String id) async {
-    await EngagementRemoteDataSource().removeBookmark(id);
+    await ref.read(engagementRemoteDataSourceProvider).removeBookmark(id);
     _load();
   }
 
