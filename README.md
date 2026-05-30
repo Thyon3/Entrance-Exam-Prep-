@@ -4,6 +4,30 @@ Mobile version of the Grade 12 entrance exam preparation platform. Built with Fl
 
 ---
 
+## ⬇️ Download & Install (No Setup Required)
+
+> Want to try the app immediately **without building from source**? Download the pre-built release APK below.
+
+| | |
+|---|---|
+| 📦 **File** | `app-release.apk` |
+| 📏 **Size** | 54.6 MB |
+| 🤖 **Platform** | Android 6.0+ (API 23+) |
+| 🔗 **Download** | [**⬇ Download APK from Releases**](../../releases/latest) |
+
+### 📲 How to Install
+
+1. Download the `app-release.apk` file from the [Releases](../../releases/latest) page.
+2. Transfer it to your Android device (if downloaded on PC).
+3. On your device, go to **Settings → Security → Enable "Install from Unknown Sources"**.
+4. Open the APK file and tap **Install**.
+5. Launch **Entrance Exam Prep** from your app drawer.
+
+> [!NOTE]
+> The app requires an active internet connection to load content from the backend API.
+
+---
+
 ## 📱 App Screenshots & Pages
 
 Below are screenshots and descriptions of the core screens in the application, highlighting the polished UI and features:
