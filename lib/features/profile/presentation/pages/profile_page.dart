@@ -1,6 +1,8 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/constants/util.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
+import 'package:finalyearproject/features/profile/presentation/pages/personal_information_page.dart';
+import 'package:finalyearproject/features/profile/presentation/pages/security_settings_page.dart';
 import 'package:finalyearproject/shared/providers/theme_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -98,87 +100,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  void _showEditProfileSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom,
-          left: 24,
-          right: 24,
-          top: 32,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Personal Information', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
-            TextField(controller: _first, decoration: const InputDecoration(labelText: 'First name')),
-            const SizedBox(height: 16),
-            TextField(controller: _last, decoration: const InputDecoration(labelText: 'Last name')),
-            const SizedBox(height: 16),
-            TextField(controller: _phone, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Phone number')),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: _loading ? null : _saveProfile,
-                child: const Text('Save changes'),
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showSecuritySheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom,
-          left: 24,
-          right: 24,
-          top: 32,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Security Settings', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
-            TextField(controller: _currentPass, obscureText: true, decoration: const InputDecoration(labelText: 'Current password')),
-            const SizedBox(height: 16),
-            TextField(controller: _newPass, obscureText: true, decoration: const InputDecoration(labelText: 'New password')),
-            const SizedBox(height: 16),
-            TextField(controller: _confirmPass, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm password')),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: _loading ? null : _changePassword,
-                child: const Text('Update password'),
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
+// Bottom sheet methods removed; navigation to dedicated pages is used now.
 
   @override
   Widget build(BuildContext context) {
@@ -200,6 +122,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         child: Column(
           children: [
             // Blue Header Section
+                        // Blue Header Section
             Container(
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).padding.top + 16,
@@ -389,7 +312,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     _buildMenuItem(
                       icon: Icons.person_outline_rounded,
                       title: 'Personal Information',
-                      onTap: _showEditProfileSheet,
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PersonalInformationPage())),
                       textColor: textColor,
                       subtextColor: subtextColor,
                       isDark: isDark,
@@ -398,7 +321,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     _buildMenuItem(
                       icon: Icons.lock_outline_rounded,
                       title: 'Security Settings',
-                      onTap: _showSecuritySheet,
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SecuritySettingsPage())),
                       textColor: textColor,
                       subtextColor: subtextColor,
                       isDark: isDark,

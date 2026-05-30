@@ -56,22 +56,24 @@ class _StudentMainLayoutState extends ConsumerState<StudentMainLayout> {
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: StudentDrawer(onLogout: _logout),
-      appBar: GradientAppBar(
-        title: _appBarTitle,
-        subtitle: _tabIndex == 0 ? 'Grade $grade · Your learning hub' : null,
-        showNotificationIcon: _tabIndex == 0,
-        onNotificationPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const NotificationsPage()),
-        ),
-        leading: Builder(
-          builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: Colors.white),
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
-          ),
-        ),
-        implyLeading: false,
-      ),
+      appBar: _tabIndex == 3
+          ? null
+          : GradientAppBar(
+              title: _appBarTitle,
+              subtitle: _tabIndex == 0 ? 'Grade $grade · Your learning hub' : null,
+              showNotificationIcon: _tabIndex == 0,
+              onNotificationPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationsPage()),
+              ),
+              leading: Builder(
+                builder: (ctx) => IconButton(
+                  icon: const Icon(Icons.menu_rounded, color: Colors.white),
+                  onPressed: () => Scaffold.of(ctx).openDrawer(),
+                ),
+              ),
+              implyLeading: false,
+            ),
       body: IndexedStack(
         index: _tabIndex,
         children: [
