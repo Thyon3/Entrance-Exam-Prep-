@@ -28,17 +28,25 @@ class FuturexListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = iconColor ?? FuturexColors.primary;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.04);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final iconSecondary = isDark ? Colors.white38 : Colors.grey.shade400;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
         decoration: BoxDecoration(
-          color: FuturexColors.surface,
+          color: cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
+          border: Border.all(color: borderColor),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.02),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -88,7 +96,7 @@ class FuturexListCard extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w600,
-                            color: FuturexColors.textPrimary,
+                            color: textPrimary,
                             height: 1.3,
                           ),
                         ),
@@ -100,8 +108,7 @@ class FuturexListCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  trailing ??
-                      Icon(icon, color: Colors.grey.shade400, size: 22),
+                  trailing ?? Icon(icon, color: iconSecondary, size: 22),
                 ],
               ),
             ),

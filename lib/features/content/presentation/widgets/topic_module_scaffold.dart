@@ -208,16 +208,22 @@ class TopicModuleListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.05);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF475569);
+    final chevronColor = isDark ? Colors.white30 : Colors.grey.shade400;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: FuturexColors.surface,
+        color: cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: Colors.black.withValues(alpha: 0.05),
-            width: 1,
-          ),
+          side: BorderSide(color: borderColor, width: 1),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -257,7 +263,7 @@ class TopicModuleListTile extends StatelessWidget {
                         style: GoogleFonts.outfit(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
-                          color: FuturexColors.textPrimary,
+                          color: textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -265,14 +271,14 @@ class TopicModuleListTile extends StatelessWidget {
                         subtitle,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
-                          color: FuturexColors.textSecondary,
+                          color: textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400, size: 20),
+                Icon(Icons.chevron_right_rounded, color: chevronColor, size: 20),
               ],
             ),
           ),

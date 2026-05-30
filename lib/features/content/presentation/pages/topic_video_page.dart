@@ -138,6 +138,9 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
       );
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dividerColor = isDark ? Colors.white12 : const Color(0xFFE2E8F0);
+
     return YoutubePlayerBuilder(
       player: YoutubePlayer(
         controller: _controller!,
@@ -171,7 +174,7 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
             ),
             // Currently playing detail
             if (_selectedVideo != null) _buildCurrentlyPlayingHeader(),
-            const Divider(height: 1, color: Color(0xFFE2E8F0)),
+            Divider(height: 1, color: dividerColor),
             // List of videos
             Expanded(
               child: RefreshIndicator(
@@ -195,6 +198,9 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
 
   Widget _buildCurrentlyPlayingHeader() {
     final title = _selectedVideo?['title']?.toString() ?? 'Selected Lesson';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
       child: Column(
@@ -237,7 +243,7 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
             style: GoogleFonts.outfit(
               fontWeight: FontWeight.w800,
               fontSize: 16,
-              color: FuturexColors.textPrimary,
+              color: textPrimary,
             ),
           ),
         ],
@@ -252,22 +258,36 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
     final isYoutube = videoId != null;
     final isSelected = _selectedVideo == v;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark
+        ? (isSelected ? FuturexColors.primary.withValues(alpha: 0.12) : const Color(0xFF1E293B))
+        : (isSelected ? FuturexColors.primary.withValues(alpha: 0.05) : Colors.white);
+    final borderColor = isSelected
+        ? FuturexColors.primary
+        : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06));
+    final thumbBg = isDark ? const Color(0xFF334155) : Colors.grey.shade200;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF475569);
+    final chevronColor = isSelected
+        ? FuturexColors.primary
+        : (isDark ? Colors.white30 : Colors.grey.shade400);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isSelected ? FuturexColors.primary.withValues(alpha: 0.05) : FuturexColors.surface,
+          color: cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? FuturexColors.primary : Colors.black.withValues(alpha: 0.06),
+            color: borderColor,
             width: isSelected ? 1.5 : 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isSelected
                   ? FuturexColors.primary.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.02),
+                  : Colors.black.withValues(alpha: isDark ? 0.18 : 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -290,7 +310,7 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
                         height: 60,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey.shade200,
+                          color: thumbBg,
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
@@ -333,7 +353,7 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
                           style: GoogleFonts.outfit(
                             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                             fontSize: 14,
-                            color: isSelected ? FuturexColors.primary : FuturexColors.textPrimary,
+                            color: isSelected ? FuturexColors.primary : textPrimary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -346,7 +366,7 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
                               size: 14,
                               color: isSelected
                                   ? FuturexColors.primary.withValues(alpha: 0.7)
-                                  : FuturexColors.textSecondary.withValues(alpha: 0.7),
+                                  : textSecondary.withValues(alpha: 0.7),
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -356,7 +376,7 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
                                 fontWeight: FontWeight.w600,
                                 color: isSelected
                                     ? FuturexColors.primary.withValues(alpha: 0.7)
-                                    : FuturexColors.textSecondary.withValues(alpha: 0.7),
+                                    : textSecondary.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -364,11 +384,7 @@ class _TopicVideoPageState extends State<TopicVideoPage> {
                       ],
                     ),
                   ),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: isSelected ? FuturexColors.primary : Colors.grey.shade400,
-                    size: 20,
-                  ),
+                  Icon(Icons.chevron_right_rounded, color: chevronColor, size: 20),
                 ],
               ),
             ),

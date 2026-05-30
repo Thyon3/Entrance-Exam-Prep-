@@ -14,6 +14,15 @@ class StudentShellBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFF0F172A).withValues(alpha: 0.06);
+    final indicatorColor = isDark
+        ? FuturexColors.primary.withValues(alpha: 0.22)
+        : FuturexColors.primary.withValues(alpha: 0.08);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -22,15 +31,12 @@ class StudentShellBottomBar extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             decoration: BoxDecoration(
-              color: FuturexColors.surface,
+              color: cardColor,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: const Color(0xFF0F172A).withValues(alpha: 0.06),
-                width: 1.5,
-              ),
+              border: Border.all(color: borderColor, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
+                  color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
                   blurRadius: 20,
                   offset: const Offset(0, 6),
                 ),
@@ -42,7 +48,7 @@ class StudentShellBottomBar extends StatelessWidget {
                 height: 64,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                indicatorColor: FuturexColors.primary.withValues(alpha: 0.08),
+                indicatorColor: indicatorColor,
                 selectedIndex: currentIndex,
                 onDestinationSelected: onIndexChanged,
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,

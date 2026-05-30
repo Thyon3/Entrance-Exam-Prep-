@@ -150,7 +150,7 @@ class _TopicDetailShellPageState extends ConsumerState<TopicDetailShellPage> {
     final modules = _modules;
 
     return Scaffold(
-      backgroundColor: FuturexColors.scaffoldBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(

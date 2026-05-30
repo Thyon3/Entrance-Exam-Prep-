@@ -1,7 +1,7 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:flutter/material.dart';
 
-/// White content card used on concept / exercise / QA tabs and forms.
+/// Content card used on concept / exercise / QA tabs and forms.
 class FuturexContentCard extends StatelessWidget {
   const FuturexContentCard({
     super.key,
@@ -18,16 +18,24 @@ class FuturexContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.04);
+    final shadowColor = Colors.black.withValues(alpha: isDark ? 0.22 : 0.02);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+
     return Container(
       width: double.infinity,
       margin: margin,
       decoration: BoxDecoration(
-        color: FuturexColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
+        border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: shadowColor,
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -41,10 +49,10 @@ class FuturexContentCard extends StatelessWidget {
             if (title != null) ...[
               Text(
                 title!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: FuturexColors.textPrimary,
+                  color: textPrimary,
                   letterSpacing: -0.2,
                 ),
               ),

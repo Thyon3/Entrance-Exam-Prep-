@@ -52,25 +52,36 @@ class FuturexSubjectCard extends StatelessWidget {
     final col = iconColor ?? colorForSubject(title);
     final pct = progress?.clamp(0, 100) ?? 0;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : const Color(0xFF0F172A).withValues(alpha: 0.06);
+    final shadowColor = isDark
+        ? Colors.black.withValues(alpha: 0.25)
+        : const Color(0xFF0F172A).withValues(alpha: 0.04);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF475569);
+    final arrowBg = isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9);
+    final arrowColor = isDark ? Colors.white54 : const Color(0xFF475569);
+    final progressBg = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Material(
-        color: FuturexColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
           child: Ink(
             decoration: BoxDecoration(
-              color: FuturexColors.surface,
+              color: cardColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: const Color(0xFF0F172A).withValues(alpha: 0.06),
-                width: 1.5,
-              ),
+              border: Border.all(color: borderColor, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+                  color: shadowColor,
                   blurRadius: 16,
                   offset: const Offset(0, 6),
                 ),
@@ -91,17 +102,17 @@ class FuturexSubjectCard extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              col.withValues(alpha: 0.15),
-                              col.withValues(alpha: 0.05),
+                              col.withValues(alpha: isDark ? 0.25 : 0.15),
+                              col.withValues(alpha: isDark ? 0.12 : 0.05),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: col.withValues(alpha: 0.1),
+                            color: col.withValues(alpha: isDark ? 0.2 : 0.1),
                             width: 1,
                           ),
                         ),
-                        child: Icon(ic, color: col, size: 28),
+                        child: Icon(ic, color: isDark ? col.withValues(alpha: 0.9) : col, size: 28),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -110,10 +121,10 @@ class FuturexSubjectCard extends StatelessWidget {
                           children: [
                             Text(
                               title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w800,
-                                color: FuturexColors.textPrimary,
+                                color: textPrimary,
                               ),
                             ),
                             if (subtitle != null) ...[
@@ -122,7 +133,7 @@ class FuturexSubjectCard extends StatelessWidget {
                                 subtitle!,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: FuturexColors.textSecondary,
+                                  color: textSecondary,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 maxLines: 1,
@@ -135,13 +146,13 @@ class FuturexSubjectCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
+                          color: arrowBg,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 14,
-                          color: FuturexColors.textSecondary,
+                          color: arrowColor,
                         ),
                       ),
                     ],
@@ -160,7 +171,7 @@ class FuturexSubjectCard extends StatelessWidget {
                               'Progress',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: FuturexColors.textSecondary,
+                                color: textSecondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -180,7 +191,7 @@ class FuturexSubjectCard extends StatelessWidget {
                           child: LinearProgressIndicator(
                             value: pct / 100,
                             minHeight: 6,
-                            backgroundColor: const Color(0xFFE2E8F0),
+                            backgroundColor: progressBg,
                             color: col,
                           ),
                         ),
@@ -217,6 +228,8 @@ class FuturexChapterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final col = accentColor ?? FuturexColors.primary;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final progressBg = isDark ? const Color(0xFF334155) : Colors.grey.shade200;
 
     return FuturexListCard(
       title: title,
@@ -248,7 +261,7 @@ class FuturexChapterCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress!.clamp(0, 100) / 100,
                 minHeight: 6,
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: progressBg,
                 color: FuturexColors.success,
               ),
             )

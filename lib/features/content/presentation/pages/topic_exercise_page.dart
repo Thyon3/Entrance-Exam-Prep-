@@ -18,7 +18,7 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
   List<dynamic> _exercises = [];
   bool _loading = true;
   final Map<String, int> _selected = {};
-  final Map<String, Map<String, dynamic>?> _feedback = {}; // {exerciseId: {'isCorrect': bool, 'correctIndex': int, 'message': String}}
+  final Map<String, Map<String, dynamic>?> _feedback = {};
 
   @override
   void initState() {
@@ -38,22 +38,19 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
     final answer = _selected[exerciseId];
     if (answer == null) return;
     try {
-      final res = await ContentRemoteDataSource()
-          .submitExercise(exerciseId, answer);
-      
+      final res = await ContentRemoteDataSource().submitExercise(exerciseId, answer);
       final isCorrect = res is Map && res['isCorrect'] == true;
       int? correctIdx;
-      
+
       if (res is Map && res['correctAnswer'] != null) {
         final rawCorrect = res['correctAnswer'].toString();
         final parsed = int.tryParse(rawCorrect);
         if (parsed != null && parsed >= 0 && parsed < options.length) {
           correctIdx = parsed;
         } else {
-          final matchIdx = options.indexWhere((opt) => opt.trim().toLowerCase() == rawCorrect.trim().toLowerCase());
-          if (matchIdx != -1) {
-            correctIdx = matchIdx;
-          }
+          final matchIdx = options
+              .indexWhere((opt) => opt.trim().toLowerCase() == rawCorrect.trim().toLowerCase());
+          if (matchIdx != -1) correctIdx = matchIdx;
         }
       }
 
@@ -79,6 +76,13 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF475569);
+    final unselectedLetterBg = isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9);
+    final defaultBorderColor = isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE2E8F0);
+    final defaultOptionBg = isDark ? const Color(0xFF1E293B) : Colors.white;
+
     if (_loading) return const FuturexLoadingBody();
     if (_exercises.isEmpty) {
       return Center(
@@ -87,7 +91,7 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
           child: Text(
             'No practice exercises available for this topic.',
             style: GoogleFonts.plusJakartaSans(
-              color: FuturexColors.textSecondary,
+              color: textSecondary,
               fontSize: 14.5,
               fontWeight: FontWeight.w500,
             ),
@@ -104,8 +108,7 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
         final ex = _exercises[i] as Map;
         final id = ex['_id']?.toString() ?? '';
         final question = ex['question']?.toString() ?? 'Question';
-        final options =
-            (ex['options'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        final options = (ex['options'] as List?)?.map((e) => e.toString()).toList() ?? [];
 
         final feedback = _feedback[id];
         final isSubmitted = feedback != null;
@@ -117,25 +120,21 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: FuturexColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'QUESTION ${i + 1}',
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: FuturexColors.primary,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: FuturexColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'QUESTION ${i + 1}',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: FuturexColors.primary,
+                    letterSpacing: 0.5,
                   ),
-                ],
+                ),
               ),
               const SizedBox(height: 12),
               // Question text
@@ -144,7 +143,7 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
                 style: GoogleFonts.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: FuturexColors.textPrimary,
+                  color: textPrimary,
                   height: 1.45,
                 ),
               ),
@@ -154,11 +153,10 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
                 final idx = entry.key;
                 final text = entry.value;
                 final isSelected = _selected[id] == idx;
-                
-                // Styling logic for choices
-                Color borderCol = const Color(0xFFE2E8F0);
-                Color bgCol = Colors.white;
-                Color textCol = FuturexColors.textPrimary;
+
+                Color borderCol = defaultBorderColor;
+                Color bgCol = defaultOptionBg;
+                Color textCol = textPrimary;
                 Widget? trailingIcon;
 
                 if (isSubmitted) {
@@ -166,20 +164,24 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
                     borderCol = FuturexColors.success;
                     bgCol = FuturexColors.success.withValues(alpha: 0.08);
                     textCol = FuturexColors.success;
-                    trailingIcon = const Icon(Icons.check_circle_rounded, color: FuturexColors.success, size: 20);
+                    trailingIcon = const Icon(Icons.check_circle_rounded,
+                        color: FuturexColors.success, size: 20);
                   } else if (isSelected && !isCorrect) {
                     borderCol = FuturexColors.error;
                     bgCol = FuturexColors.error.withValues(alpha: 0.08);
                     textCol = FuturexColors.error;
-                    trailingIcon = const Icon(Icons.cancel_rounded, color: FuturexColors.error, size: 20);
+                    trailingIcon = const Icon(Icons.cancel_rounded,
+                        color: FuturexColors.error, size: 20);
                   }
                 } else if (isSelected) {
                   borderCol = FuturexColors.primary;
-                  bgCol = FuturexColors.primary.withValues(alpha: 0.05);
+                  bgCol = FuturexColors.primary.withValues(alpha: 0.08);
                   textCol = FuturexColors.primary;
                 }
 
-                final letter = String.fromCharCode(65 + idx); // A, B, C, D...
+                final letter = String.fromCharCode(65 + idx);
+                final letterActive = isSelected ||
+                    (isSubmitted && (idx == correctIndex || (isSelected && !isCorrect)));
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -206,16 +208,12 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: isSelected || (isSubmitted && (idx == correctIndex || (isSelected && !isCorrect)))
-                                    ? borderCol
-                                    : const Color(0xFFF1F5F9),
+                                color: letterActive ? borderCol : unselectedLetterBg,
                               ),
                               child: Text(
                                 letter,
                                 style: TextStyle(
-                                  color: isSelected || (isSubmitted && (idx == correctIndex || (isSelected && !isCorrect)))
-                                      ? Colors.white
-                                      : FuturexColors.textSecondary,
+                                  color: letterActive ? Colors.white : textSecondary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13,
                                 ),
@@ -227,7 +225,7 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
                                 text,
                                 style: GoogleFonts.plusJakartaSans(
                                   color: textCol,
-                                  fontWeight: isSelected || (isSubmitted && idx == correctIndex)
+                                  fontWeight: (isSelected || (isSubmitted && idx == correctIndex))
                                       ? FontWeight.w700
                                       : FontWeight.w500,
                                   fontSize: 14.5,
@@ -250,9 +248,7 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
                     width: double.infinity,
                     height: 48,
                     child: FilledButton(
-                      onPressed: _selected[id] != null
-                          ? () => _submit(id, options)
-                          : null,
+                      onPressed: _selected[id] != null ? () => _submit(id, options) : null,
                       style: FilledButton.styleFrom(
                         backgroundColor: FuturexColors.primary,
                         shape: RoundedRectangleBorder(
@@ -270,7 +266,6 @@ class _TopicExercisePageState extends State<TopicExercisePage> {
                   ),
                 if (isSubmitted) ...[
                   const SizedBox(height: 12),
-                  // Styled feedback box
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),

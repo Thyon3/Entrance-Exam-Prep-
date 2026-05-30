@@ -45,6 +45,13 @@ class _TopicConceptPageState extends State<TopicConceptPage> {
         icon: Icons.article_outlined,
       );
     }
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF475569);
+    final imgFallbackBg = isDark ? const Color(0xFF334155) : Colors.grey.shade100;
+    final imgFallbackIcon = isDark ? Colors.white30 : Colors.grey.shade400;
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _concepts.length,
@@ -71,7 +78,7 @@ class _TopicConceptPageState extends State<TopicConceptPage> {
                       style: GoogleFonts.outfit(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: FuturexColors.textPrimary,
+                        color: textPrimary,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -111,9 +118,9 @@ class _TopicConceptPageState extends State<TopicConceptPage> {
                     width: double.infinity,
                     errorBuilder: (_, __, ___) => Container(
                       height: 120,
-                      color: Colors.grey.shade100,
+                      color: imgFallbackBg,
                       alignment: Alignment.center,
-                      child: Icon(Icons.broken_image_outlined, color: Colors.grey.shade400, size: 36),
+                      child: Icon(Icons.broken_image_outlined, color: imgFallbackIcon, size: 36),
                     ),
                   ),
                 ),
@@ -126,14 +133,14 @@ class _TopicConceptPageState extends State<TopicConceptPage> {
                   p: GoogleFonts.plusJakartaSans(
                     fontSize: 14.5,
                     height: 1.6,
-                    color: FuturexColors.textSecondary,
+                    color: textSecondary,
                   ),
-                  h1: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: FuturexColors.textPrimary),
-                  h2: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: FuturexColors.textPrimary),
-                  h3: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: FuturexColors.textPrimary),
-                  strong: const TextStyle(fontWeight: FontWeight.w700, color: FuturexColors.textPrimary),
+                  h1: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: textPrimary),
+                  h2: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: textPrimary),
+                  h3: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: textPrimary),
+                  strong: TextStyle(fontWeight: FontWeight.w700, color: textPrimary),
                   em: const TextStyle(fontStyle: FontStyle.italic),
-                  listBullet: TextStyle(color: FuturexColors.textSecondary),
+                  listBullet: TextStyle(color: textSecondary),
                 ),
               ),
             ],

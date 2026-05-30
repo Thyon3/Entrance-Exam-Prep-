@@ -17,7 +17,11 @@ class StudentDrawer extends ConsumerWidget {
     required VoidCallback onTap,
     Color? iconColor,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = iconColor ?? FuturexColors.primary;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final chevronColor = isDark ? Colors.white30 : Colors.grey.shade400;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: ListTile(
@@ -26,20 +30,20 @@ class StudentDrawer extends ConsumerWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withValues(alpha: isDark ? 0.18 : 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 22),
         ),
         title: Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 15,
-            color: FuturexColors.textPrimary,
+            color: textPrimary,
           ),
         ),
-        trailing: Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400),
+        trailing: Icon(Icons.chevron_right_rounded, color: chevronColor),
         onTap: onTap,
       ),
     );
@@ -53,12 +57,19 @@ class StudentDrawer extends ConsumerWidget {
         ? user!.firstName[0].toUpperCase()
         : 'S';
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final drawerBg = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+    final sectionLabelColor = isDark ? Colors.white38 : Colors.grey.shade600;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF475569);
+
     return Drawer(
       width: 300,
-      backgroundColor: FuturexColors.scaffoldBg,
+      backgroundColor: drawerBg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // ── Gradient header ──────────────────────────────────────────────
           Container(
             padding: EdgeInsets.fromLTRB(
               20,
@@ -143,7 +154,7 @@ class StudentDrawer extends ConsumerWidget {
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
-                color: Colors.grey.shade600,
+                color: sectionLabelColor,
               ),
             ),
           ),
@@ -157,6 +168,7 @@ class StudentDrawer extends ConsumerWidget {
                   label: 'Home',
                   onTap: () => Navigator.pop(context),
                 ),
+                // Grade selector expansion tile
                 Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                   child: Padding(
@@ -168,48 +180,53 @@ class StudentDrawer extends ConsumerWidget {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: FuturexColors.primary.withValues(alpha: 0.1),
+                          color: FuturexColors.primary.withValues(alpha: isDark ? 0.18 : 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(Icons.school_rounded, color: FuturexColors.primary, size: 22),
                       ),
-                      title: const Text(
+                      title: Text(
                         'Select Grade',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
-                          color: FuturexColors.textPrimary,
+                          color: textPrimary,
                         ),
                       ),
                       subtitle: Text(
                         'Grade $selectedGrade',
                         style: TextStyle(
                           fontSize: 12,
-                          color: FuturexColors.textSecondary.withValues(alpha: 0.8),
+                          color: textSecondary.withValues(alpha: 0.8),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       childrenPadding: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
                       children: gradeItems.map((g) {
                         final isSelected = selectedGrade == g;
+                        final selectedTileBg = isDark
+                            ? FuturexColors.primary.withValues(alpha: 0.15)
+                            : FuturexColors.primary.withValues(alpha: 0.08);
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: ListTile(
                             dense: true,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            tileColor: isSelected ? FuturexColors.primary.withValues(alpha: 0.08) : null,
+                            tileColor: isSelected ? selectedTileBg : null,
                             title: Text(
                               'Grade $g',
                               style: TextStyle(
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                color: isSelected ? FuturexColors.primary : FuturexColors.textPrimary,
+                                color: isSelected ? FuturexColors.primary : textPrimary,
                                 fontSize: 14,
                               ),
                             ),
-                            trailing: isSelected ? const Icon(Icons.check_circle_rounded, color: FuturexColors.primary, size: 18) : null,
+                            trailing: isSelected
+                                ? const Icon(Icons.check_circle_rounded, color: FuturexColors.primary, size: 18)
+                                : null,
                             onTap: () {
                               ref.read(selectedGradeProvider.notifier).setGrade(g);
-                              Navigator.pop(context); // Close drawer
+                              Navigator.pop(context);
                             },
                           ),
                         );

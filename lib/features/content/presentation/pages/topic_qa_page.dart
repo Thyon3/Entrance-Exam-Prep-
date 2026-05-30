@@ -41,7 +41,8 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
   }
 
   Future<void> _load() async {
-    final list = await ref.read(engagementRemoteDataSourceProvider).getTopicQuestions(widget.topicId);
+    final list =
+        await ref.read(engagementRemoteDataSourceProvider).getTopicQuestions(widget.topicId);
     setState(() {
       _questions = list;
       _loading = false;
@@ -70,26 +71,35 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
 
   Color _getAvatarColor(String username) {
     final h = username.hashCode.abs();
-    final colors = [
-      const Color(0xFF3F51B5),
-      const Color(0xFF009688),
-      const Color(0xFF673AB7),
-      const Color(0xFFE91E63),
-      const Color(0xFF4CAF50),
-      const Color(0xFF03A9F4),
-      const Color(0xFFFF9800),
+    const colors = [
+      Color(0xFF3F51B5),
+      Color(0xFF009688),
+      Color(0xFF673AB7),
+      Color(0xFFE91E63),
+      Color(0xFF4CAF50),
+      Color(0xFF03A9F4),
+      Color(0xFFFF9800),
     ];
     return colors[h % colors.length];
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF475569);
+    final replyBg = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+    final replyBorder = isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE2E8F0);
+    final inputFill = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+    final inputBorder = isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE2E8F0);
+    final sectionLabelColor = isDark ? Colors.white38 : const Color(0xFF475569);
+
     if (_loading) return const FuturexLoadingBody();
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // Ask a question card
+        // ── Ask a question card ──────────────────────────────────────────
         if (widget.isStudent)
           FuturexContentCard(
             child: Column(
@@ -100,27 +110,30 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                   style: GoogleFonts.outfit(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: FuturexColors.textPrimary,
+                    color: textPrimary,
                   ),
                 ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _askController,
                   maxLines: 3,
-                  style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    color: textPrimary,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Type your study question here...',
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    fillColor: const Color(0xFFF8FAFC),
+                    hintStyle: TextStyle(color: textSecondary),
+                    fillColor: inputFill,
                     filled: true,
                     contentPadding: const EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      borderSide: BorderSide(color: inputBorder),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      borderSide: BorderSide(color: inputBorder),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -141,7 +154,8 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                     icon: const Icon(Icons.send_rounded, size: 16),
                     label: Text(
                       'Post Question',
-                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 13.5),
+                      style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.bold, fontSize: 13.5),
                     ),
                   ),
                 ),
@@ -149,7 +163,7 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
             ),
           ),
 
-        // Questions thread header
+        // ── Discussion forum header ──────────────────────────────────────
         if (_questions.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 12.0, top: 4.0),
@@ -158,13 +172,13 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                color: FuturexColors.textSecondary,
+                color: sectionLabelColor,
                 letterSpacing: 1.0,
               ),
             ),
           ),
 
-        // Threaded list of questions
+        // ── Threaded questions ───────────────────────────────────────────
         ..._questions.map((q) {
           final m = q as Map;
           final qid = m['_id']?.toString() ?? '';
@@ -173,15 +187,13 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
               ? (m['studentId']['fullName']?.toString() ?? 'Student')
               : 'Student';
           final initial = qAuthor.isNotEmpty ? qAuthor[0].toUpperCase() : 'S';
-
-          // Check for replies/answers in the question payload
           final answers = (m['answers'] ?? m['replies'] ?? []) as List;
 
           return FuturexContentCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Question Author Row
+                // Question author row
                 Row(
                   children: [
                     CircleAvatar(
@@ -206,14 +218,14 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
-                              color: FuturexColors.textPrimary,
+                              color: textPrimary,
                             ),
                           ),
                           Text(
                             'Asked question',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 11,
-                              color: FuturexColors.textSecondary,
+                              color: textSecondary,
                             ),
                           ),
                         ],
@@ -222,18 +234,18 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                // Question Content Text
+                // Question text
                 Text(
                   qText,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w600,
-                    color: FuturexColors.textPrimary,
+                    color: textPrimary,
                     height: 1.45,
                   ),
                 ),
-                
-                // Render answers/replies list
+
+                // Answers/replies list
                 if (answers.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   const Divider(height: 1),
@@ -242,7 +254,8 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                     final ansMap = ans is Map ? ans : {};
                     final ansText = ansMap['content']?.toString() ?? ans.toString();
                     final ansAuthor = ansMap['authorName']?.toString() ?? 'Tutor';
-                    final ansInitial = ansAuthor.isNotEmpty ? ansAuthor[0].toUpperCase() : 'T';
+                    final ansInitial =
+                        ansAuthor.isNotEmpty ? ansAuthor[0].toUpperCase() : 'T';
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 14.0),
@@ -259,9 +272,9 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                             child: Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF8FAFC),
+                                color: replyBg,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                border: Border.all(color: replyBorder),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,10 +283,15 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                                     children: [
                                       CircleAvatar(
                                         radius: 10,
-                                        backgroundColor: FuturexColors.success.withValues(alpha: 0.8),
+                                        backgroundColor:
+                                            FuturexColors.success.withValues(alpha: 0.8),
                                         child: Text(
                                           ansInitial,
-                                          style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(width: 6),
@@ -282,14 +300,16 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                                         style: GoogleFonts.plusJakartaSans(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11.5,
-                                          color: FuturexColors.textPrimary,
+                                          color: textPrimary,
                                         ),
                                       ),
                                       const SizedBox(width: 6),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: FuturexColors.success.withValues(alpha: 0.1),
+                                          color:
+                                              FuturexColors.success.withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Text(
@@ -308,7 +328,7 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                                     ansText,
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13.5,
-                                      color: FuturexColors.textSecondary,
+                                      color: textSecondary,
                                       height: 1.4,
                                     ),
                                   ),
@@ -322,7 +342,7 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                   }),
                 ],
 
-                // Answer Input Section (for Teachers/Tutors)
+                // Answer input section (teachers/tutors)
                 if (!widget.isStudent) ...[
                   const SizedBox(height: 12),
                   const Divider(height: 1),
@@ -332,24 +352,27 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                       Expanded(
                         child: TextField(
                           controller: _getAnswerController(qid),
-                          style: GoogleFonts.plusJakartaSans(fontSize: 13.5),
+                          style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13.5, color: textPrimary),
                           decoration: InputDecoration(
                             hintText: 'Type your explanation...',
-                            hintStyle: const TextStyle(color: Colors.grey),
-                            fillColor: const Color(0xFFF1F5F9),
+                            hintStyle: TextStyle(color: textSecondary),
+                            fillColor: inputFill,
                             filled: true,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                              borderSide: BorderSide(color: inputBorder),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                              borderSide: BorderSide(color: inputBorder),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: FuturexColors.primary),
+                              borderSide:
+                                  const BorderSide(color: FuturexColors.primary),
                             ),
                           ),
                         ),
@@ -357,11 +380,14 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () => _answer(qid),
-                        icon: const Icon(Icons.send_rounded, color: FuturexColors.primary, size: 20),
+                        icon: const Icon(Icons.send_rounded,
+                            color: FuturexColors.primary, size: 20),
                         style: IconButton.styleFrom(
-                          backgroundColor: FuturexColors.primary.withValues(alpha: 0.1),
+                          backgroundColor:
+                              FuturexColors.primary.withValues(alpha: 0.1),
                           padding: const EdgeInsets.all(10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
                     ],
@@ -378,7 +404,7 @@ class _TopicQaPageState extends ConsumerState<TopicQaPage> {
             child: Center(
               child: Text(
                 'No questions asked yet.',
-                style: GoogleFonts.plusJakartaSans(color: FuturexColors.textSecondary),
+                style: GoogleFonts.plusJakartaSans(color: textSecondary),
               ),
             ),
           ),
