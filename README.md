@@ -23,6 +23,11 @@ Below are screenshots and descriptions of the core screens in the application, h
 | <img src="screenshots/Ai_chatbot_page.png" width="220" /> | <img src="screenshots/bookmarks_page.png" width="220" /> | <img src="screenshots/search_contents_page.png" width="220" /> |
 | Interactive AI tutor chat for asking complex questions and getting step-by-step guidance. | Saved formulas, questions, and topics kept for quick offline-ready reference. | Global search interface to quickly find content, chapters, or questions. |
 
+| **Profile Page** | | |
+| :---: | :---: | :---: |
+| <img src="screenshots/profile_page.png" width="220" /> | | |
+| Student profile with avatar, premium card, and settings (Personal Information, Security, Dark Mode). | | |
+
 ---
 
 ## 🚀 Getting Started
