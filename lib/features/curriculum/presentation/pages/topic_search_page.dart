@@ -56,13 +56,17 @@ class _TopicSearchPageState extends ConsumerState<TopicSearchPage> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
           child: Material(
-            color: FuturexColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             elevation: 0,
             borderRadius: BorderRadius.circular(16),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: FuturexColors.primary.withValues(alpha: 0.08),
