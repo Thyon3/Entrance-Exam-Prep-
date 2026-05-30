@@ -100,7 +100,7 @@ class AuthDropdownField<T> extends StatelessWidget {
         Text(label, style: AuthTheme.fieldLabel()),
         const SizedBox(height: 4),
         DropdownButtonFormField<T>(
-          value: value,
+          initialValue: value,
           items: items,
           onChanged: onChanged,
           decoration: AuthTheme.pillDecoration(hint: label),

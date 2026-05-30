@@ -1,17 +1,18 @@
-import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
+import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/auth/presentation/theme/auth_theme.dart';
 import 'package:finalyearproject/features/auth/presentation/widgets/auth_form_card.dart';
 import 'package:finalyearproject/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
+class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  ConsumerState<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _email = TextEditingController();
   bool _loading = false;
   String? _error;
@@ -34,7 +35,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       _success = null;
     });
     try {
-      await AuthRemoteDataSource().requestPasswordReset(_email.text.trim());
+      await ref.read(authRepositoryProvider).requestPasswordReset(_email.text.trim());
       setState(() => _success = 'Check your email for reset instructions.');
     } catch (e) {
       setState(() => _error = e.toString());

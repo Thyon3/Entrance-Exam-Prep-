@@ -1,18 +1,19 @@
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
-import 'package:finalyearproject/features/admin/data/admin_remote_data_source.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
-import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
+import 'package:finalyearproject/features/admin/presentation/admin_providers.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 
-class AdminCoursesPage extends StatefulWidget {
+class AdminCoursesPage extends ConsumerStatefulWidget {
   const AdminCoursesPage({super.key});
 
   @override
-  State<AdminCoursesPage> createState() => _AdminCoursesPageState();
+  ConsumerState<AdminCoursesPage> createState() => _AdminCoursesPageState();
 }
 
-class _AdminCoursesPageState extends State<AdminCoursesPage> {
+class _AdminCoursesPageState extends ConsumerState<AdminCoursesPage> {
   List<SubjectModel> _subjects = [];
   bool _loading = true;
   final _name = TextEditingController();
@@ -26,7 +27,7 @@ class _AdminCoursesPageState extends State<AdminCoursesPage> {
   }
 
   Future<void> _load() async {
-    final list = await CurriculumRemoteDataSource().getSubjects();
+    final list = await ref.read(curriculumRemoteDataSourceProvider).getSubjects();
     setState(() {
       _subjects = list;
       _loading = false;
@@ -34,7 +35,7 @@ class _AdminCoursesPageState extends State<AdminCoursesPage> {
   }
 
   Future<void> _create() async {
-    await AdminRemoteDataSource().createSubject({
+    await ref.read(adminRemoteDataSourceProvider).createSubject({
       'subjectName': _name.text.trim(),
       'gradeLevel': _grade,
       'stream': _stream,
@@ -44,7 +45,7 @@ class _AdminCoursesPageState extends State<AdminCoursesPage> {
   }
 
   Future<void> _delete(String id) async {
-    await AdminRemoteDataSource().deleteSubject(id);
+    await ref.read(adminRemoteDataSourceProvider).deleteSubject(id);
     _load();
   }
 

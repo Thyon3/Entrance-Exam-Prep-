@@ -3,17 +3,18 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_list_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MyReportsPage extends StatefulWidget {
+class MyReportsPage extends ConsumerStatefulWidget {
   const MyReportsPage({super.key});
 
   @override
-  State<MyReportsPage> createState() => _MyReportsPageState();
+  ConsumerState<MyReportsPage> createState() => _MyReportsPageState();
 }
 
-class _MyReportsPageState extends State<MyReportsPage> {
+class _MyReportsPageState extends ConsumerState<MyReportsPage> {
   List<dynamic> _issues = [];
   bool _loading = true;
 
@@ -26,7 +27,7 @@ class _MyReportsPageState extends State<MyReportsPage> {
   Future<void> _load() async {
     setState(() => _loading = true);
     try {
-      final list = await EngagementRemoteDataSource().getMyIssues();
+      final list = await ref.read(engagementRemoteDataSourceProvider).getMyIssues();
       setState(() {
         _issues = list;
         _loading = false;

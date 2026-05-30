@@ -1,8 +1,6 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/constants/util.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
-import 'package:finalyearproject/features/auth/data/auth_repository.dart';
-import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
 import 'package:finalyearproject/shared/providers/theme_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +51,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Future<void> _saveProfile() async {
     setState(() => _loading = true);
     try {
-      final user = await AuthRepository(AuthRemoteDataSource()).updateProfile({
+      final user = await ref.read(authRepositoryProvider).updateProfile({
         'firstName': _first.text.trim(),
         'lastName': _last.text.trim(),
         'phoneNumber': _phone.text.trim(),
@@ -75,7 +73,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     }
     setState(() => _loading = true);
     try {
-      await AuthRepository(AuthRemoteDataSource())
+      await ref.read(authRepositoryProvider)
           .changePassword(_currentPass.text, _newPass.text);
       if (mounted) Navigator.pop(context);
       _showSnack('Password changed successfully', FuturexColors.success);
@@ -411,7 +409,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       title: 'Dark Mode',
                       trailing: CupertinoSwitch(
                         value: isDark,
-                        activeColor: const Color(0xFF534AEB),
+                      activeTrackColor: const Color(0xFF534AEB),
                         onChanged: (_) => ref.read(themeProvider.notifier).toggleTheme(),
                       ),
                       textColor: textColor,

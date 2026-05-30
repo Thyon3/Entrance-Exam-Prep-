@@ -2,7 +2,8 @@ import 'package:finalyearproject/core/network/api_client.dart';
 import 'package:finalyearproject/features/auth/domain/auth_models.dart';
 
 class AuthRemoteDataSource {
-  final ApiClient _api = ApiClient();
+  AuthRemoteDataSource(this._api);
+  final ApiClient _api;
 
   Future<AuthResult> login(String email, String password) async {
     final data = await _api.post(

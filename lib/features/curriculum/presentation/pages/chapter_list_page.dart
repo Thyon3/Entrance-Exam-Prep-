@@ -4,14 +4,15 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_section_header.dar
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/chapter_form_page.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/topic_list_page.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChapterListPage extends StatefulWidget {
+class ChapterListPage extends ConsumerStatefulWidget {
   const ChapterListPage({
     super.key,
     required this.subjectId,
@@ -24,10 +25,10 @@ class ChapterListPage extends StatefulWidget {
   final bool isStudent;
 
   @override
-  State<ChapterListPage> createState() => _ChapterListPageState();
+  ConsumerState<ChapterListPage> createState() => _ChapterListPageState();
 }
 
-class _ChapterListPageState extends State<ChapterListPage> {
+class _ChapterListPageState extends ConsumerState<ChapterListPage> {
   List<ChapterModel> _chapters = [];
   bool _loading = true;
 
@@ -41,9 +42,9 @@ class _ChapterListPageState extends State<ChapterListPage> {
     setState(() => _loading = true);
     try {
       final chapters =
-          await CurriculumRemoteDataSource().getChaptersBySubject(widget.subjectId);
+          await ref.read(curriculumRemoteDataSourceProvider).getChaptersBySubject(widget.subjectId);
       if (widget.isStudent) {
-        final progress = await EngagementRemoteDataSource()
+        final progress = await ref.read(engagementRemoteDataSourceProvider)
             .getSubjectChapterProgress(widget.subjectId);
         final map = <String, double>{};
         if (progress is List) {

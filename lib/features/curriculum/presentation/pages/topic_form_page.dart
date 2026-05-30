@@ -1,24 +1,25 @@
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TopicFormPage extends StatefulWidget {
+class TopicFormPage extends ConsumerStatefulWidget {
   const TopicFormPage({super.key, required this.chapterId});
   final String chapterId;
 
   @override
-  State<TopicFormPage> createState() => _TopicFormPageState();
+  ConsumerState<TopicFormPage> createState() => _TopicFormPageState();
 }
 
-class _TopicFormPageState extends State<TopicFormPage> {
+class _TopicFormPageState extends ConsumerState<TopicFormPage> {
   final _name = TextEditingController();
   bool _saving = false;
 
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
-      await CurriculumRemoteDataSource().createTopic(
+      await ref.read(curriculumRemoteDataSourceProvider).createTopic(
         widget.chapterId,
         {'topicName': _name.text.trim()},
       );

@@ -1,16 +1,17 @@
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TeacherQaPage extends StatefulWidget {
+class TeacherQaPage extends ConsumerStatefulWidget {
   const TeacherQaPage({super.key});
 
   @override
-  State<TeacherQaPage> createState() => _TeacherQaPageState();
+  ConsumerState<TeacherQaPage> createState() => _TeacherQaPageState();
 }
 
-class _TeacherQaPageState extends State<TeacherQaPage> {
+class _TeacherQaPageState extends ConsumerState<TeacherQaPage> {
   List<dynamic> _questions = [];
   List<dynamic> _issues = [];
   final _answer = TextEditingController();
@@ -23,7 +24,7 @@ class _TeacherQaPageState extends State<TeacherQaPage> {
   }
 
   Future<void> _load() async {
-    final engagement = EngagementRemoteDataSource();
+    final engagement = ref.read(engagementRemoteDataSourceProvider);
     try {
       final q = await engagement.listQuestions();
       final issues = await engagement.getIssuesForReview();
@@ -39,14 +40,14 @@ class _TeacherQaPageState extends State<TeacherQaPage> {
 
   Future<void> _answerQuestion(String qid) async {
     if (_answer.text.trim().isEmpty) return;
-    await EngagementRemoteDataSource()
+    await ref.read(engagementRemoteDataSourceProvider)
         .answerQuestion(qid, _answer.text.trim());
     _answer.clear();
     _load();
   }
 
   Future<void> _updateIssue(String id, String status) async {
-    await EngagementRemoteDataSource().updateIssueStatus(id, status);
+    await ref.read(engagementRemoteDataSourceProvider).updateIssueStatus(id, status);
     _load();
   }
 

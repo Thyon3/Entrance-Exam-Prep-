@@ -4,7 +4,7 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart'
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/auth/presentation/pages/welcome_page.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/chapter_list_page.dart';
 import 'package:finalyearproject/features/profile/presentation/pages/profile_page.dart';
@@ -33,7 +33,7 @@ class _TeacherMainLayoutState extends ConsumerState<TeacherMainLayout> {
   Future<void> _loadSubjects() async {
     setState(() => _loading = true);
     try {
-      final all = await CurriculumRemoteDataSource().getSubjects();
+      final all = await ref.read(curriculumRemoteDataSourceProvider).getSubjects();
       setState(() {
         _subjects = all;
         _loading = false;

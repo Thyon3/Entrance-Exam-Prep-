@@ -5,13 +5,8 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_section_header.dar
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/features/ai/presentation/widgets/student_chat_bot.dart';
-import 'package:finalyearproject/features/auth/application/auth_provider.dart';
-import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
-import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/chapter_list_page.dart';
-import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
+import 'package:finalyearproject/features/student/application/student_dashboard_provider.dart';
 import 'package:finalyearproject/features/student/presentation/pages/streak_detail_page.dart';
 import 'package:finalyearproject/shared/providers/grade_provider.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +22,6 @@ class StudentDashboardPage extends ConsumerStatefulWidget {
 }
 
 class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
-  List<SubjectModel> _subjects = [];
-  dynamic _gradeProgress;
-  dynamic _streak;
-  bool _loading = true;
-
   // Banner carousel
   final PageController _bannerController = PageController();
   int _bannerIndex = 0;
@@ -58,7 +48,6 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
   @override
   void initState() {
     super.initState();
-    _load();
     _startBannerTimer();
   }
 
@@ -81,66 +70,40 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
     });
   }
 
-  Future<void> _load() async {
-    setState(() => _loading = true);
-    try {
-      final grade = ref.read(selectedGradeProvider);
-      final user = ref.read(authProvider).user;
-      final curriculum = ref.read(curriculumRemoteDataSourceProvider);
-      final engagement = ref.read(engagementRemoteDataSourceProvider);
-      final all = await curriculum.getSubjects();
-      final progressList = await engagement.getSubjectProgress();
-      final progressMap = <String, dynamic>{};
-      for (final p in progressList) {
-        if (p is Map) {
-          final sid = (p['subjectId']?['_id'] ?? p['subjectId'])?.toString();
-          if (sid != null) progressMap[sid] = p;
-        }
-      }
-      final filtered = all.where((s) {
-        if (!gradeMatchesFilter(s.gradeLevel, grade)) return false;
-        if (s.stream != null && user?.stream != null && s.stream != user!.stream) return false;
-        return true;
-      }).map((s) {
-        final p = progressMap[s.id];
-        final pct = p is Map ? (p['completionPercentage'] as num?)?.toDouble() : null;
-        return SubjectModel(
-          id: s.id,
-          subjectName: s.subjectName,
-          gradeLevel: s.gradeLevel,
-          stream: s.stream,
-          progressPercent: pct,
-        );
-      }).toList();
-      final gradeProg = await engagement.getGradeProgress(grade);
-      final streak = await engagement.getLearningStreak(gradeLevel: grade);
-      setState(() {
-        _subjects = filtered;
-        _gradeProgress = gradeProg;
-        _streak = streak;
-        _loading = false;
-      });
-    } catch (_) {
-      setState(() => _loading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    ref.listen(selectedGradeProvider, (_, __) => _load());
-    if (_loading) return const FuturexLoadingBody();
-
+    final dashboard = ref.watch(studentDashboardProvider);
     final grade = ref.watch(selectedGradeProvider);
-    final pct = _gradeProgress is Map
-        ? (_gradeProgress['completionPercentage'] as num?)?.toDouble()
+
+    // Listen to grade changes to reload dashboard
+    ref.listen(selectedGradeProvider, (_, __) {
+      ref.read(studentDashboardProvider.notifier).load();
+    });
+
+    if (dashboard.isLoading && dashboard.subjects.isEmpty) {
+      return const FuturexLoadingBody();
+    }
+
+    if (dashboard.error != null && dashboard.subjects.isEmpty) {
+      return Center(
+        child: FuturexErrorState(
+          title: 'Oops! Something went wrong',
+          message: dashboard.error!,
+          onRetry: () => ref.read(studentDashboardProvider.notifier).load(),
+        ),
+      );
+    }
+
+    final pct = dashboard.gradeProgress is Map
+        ? (dashboard.gradeProgress['completionPercentage'] as num?)?.toDouble()
         : null;
-    final days = _streak is Map ? (_streak['currentStreak'] as num?)?.toInt() : null;
-    final longest = _streak is Map ? (_streak['longestStreak'] as num?)?.toInt() : null;
+    final days = dashboard.streak is Map ? (dashboard.streak['currentStreak'] as num?)?.toInt() : null;
+    final longest = dashboard.streak is Map ? (dashboard.streak['longestStreak'] as num?)?.toInt() : null;
 
     return Stack(
       children: [
         RefreshIndicator(
-          onRefresh: _load,
+          onRefresh: () => ref.read(studentDashboardProvider.notifier).load(),
           color: FuturexColors.primary,
           child: ListView(
             padding: EdgeInsets.fromLTRB(0, 24, 0, widget.bottomInset + 24),
@@ -152,7 +115,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
               // ── Compact Stat Cards ───────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _buildCompactStats(pct, days, grade),
+                child: _buildCompactStats(pct, days, longest, grade),
               ),
               const SizedBox(height: 8),
 
@@ -161,23 +124,23 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: FuturexSectionHeader(
                   title: 'My subjects',
-                  subtitle: _subjects.isEmpty
+                  subtitle: dashboard.subjects.isEmpty
                       ? 'No subjects for Grade $grade yet'
-                      : '${_subjects.length} subject${_subjects.length == 1 ? '' : 's'} · Grade $grade',
+                      : '${dashboard.subjects.length} subject${dashboard.subjects.length == 1 ? '' : 's'} · Grade $grade',
                 ),
               ),
-              if (_subjects.isEmpty)
+              if (dashboard.subjects.isEmpty && !dashboard.isLoading)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: FuturexEmptyState(
                     title: 'No subjects yet',
                     message: 'Try selecting another grade from the drawer menu, or pull to refresh.',
                     icon: Icons.school_outlined,
-                    onAction: _load,
+                    onAction: () => ref.read(studentDashboardProvider.notifier).load(),
                   ),
                 )
               else
-                for (final s in _subjects)
+                for (final s in dashboard.subjects)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: FuturexSubjectCard(
@@ -204,7 +167,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
         Positioned(
           right: 16,
           bottom: 8,
-          child: StudentChatBot(),
+          child: const StudentChatBot(),
         ),
       ],
     );
@@ -335,7 +298,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
     );
   }
 
-  Widget _buildCompactStats(double? pct, int? days, String grade) {
+  Widget _buildCompactStats(double? pct, int? days, int? longest, String grade) {
     return Row(
       children: [
         // Progress card (compact)
@@ -362,7 +325,7 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
                 builder: (_) => StreakDetailPage(
                   currentStreak: days ?? 0,
                   longestStreak: (longest ?? days ?? 0),
-                  streakData: _streak,
+                  streakData: ref.read(studentDashboardProvider).streak,
                 ),
               ),
             ),
@@ -371,8 +334,6 @@ class _StudentDashboardPageState extends ConsumerState<StudentDashboardPage> {
       ],
     );
   }
-
-  int? get longest => _streak is Map ? (_streak['longestStreak'] as num?)?.toInt() : null;
 
   Widget _compactStatCard({
     required IconData icon,

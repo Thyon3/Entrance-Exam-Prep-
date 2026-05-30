@@ -3,22 +3,23 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_list_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/topic_detail_shell_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TopicSearchPage extends StatefulWidget {
+class TopicSearchPage extends ConsumerStatefulWidget {
   const TopicSearchPage({super.key, this.embedded = false});
 
   /// When true, renders without its own [Scaffold] (used inside [StudentMainLayout]).
   final bool embedded;
 
   @override
-  State<TopicSearchPage> createState() => _TopicSearchPageState();
+  ConsumerState<TopicSearchPage> createState() => _TopicSearchPageState();
 }
 
-class _TopicSearchPageState extends State<TopicSearchPage> {
+class _TopicSearchPageState extends ConsumerState<TopicSearchPage> {
   final _query = TextEditingController();
   List<TopicModel> _results = [];
   bool _searching = false;
@@ -38,7 +39,7 @@ class _TopicSearchPageState extends State<TopicSearchPage> {
     });
     try {
       final list =
-          await CurriculumRemoteDataSource().searchTopics(_query.text.trim());
+          await ref.read(curriculumRemoteDataSourceProvider).searchTopics(_query.text.trim());
       setState(() {
         _results = list;
         _searching = false;

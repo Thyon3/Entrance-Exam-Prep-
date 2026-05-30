@@ -1,20 +1,21 @@
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class TopicQaPage extends StatefulWidget {
+class TopicQaPage extends ConsumerStatefulWidget {
   const TopicQaPage({super.key, required this.topicId, this.isStudent = true});
   final String topicId;
   final bool isStudent;
 
   @override
-  State<TopicQaPage> createState() => _TopicQaPageState();
+  ConsumerState<TopicQaPage> createState() => _TopicQaPageState();
 }
 
-class _TopicQaPageState extends State<TopicQaPage> {
+class _TopicQaPageState extends ConsumerState<TopicQaPage> {
   List<dynamic> _questions = [];
   final _askController = TextEditingController();
   final Map<String, TextEditingController> _answerControllers = {};
@@ -40,7 +41,7 @@ class _TopicQaPageState extends State<TopicQaPage> {
   }
 
   Future<void> _load() async {
-    final list = await EngagementRemoteDataSource().getTopicQuestions(widget.topicId);
+    final list = await ref.read(engagementRemoteDataSourceProvider).getTopicQuestions(widget.topicId);
     setState(() {
       _questions = list;
       _loading = false;
@@ -50,7 +51,7 @@ class _TopicQaPageState extends State<TopicQaPage> {
   Future<void> _ask() async {
     final text = _askController.text.trim();
     if (text.isEmpty) return;
-    await EngagementRemoteDataSource().askQuestion({
+    await ref.read(engagementRemoteDataSourceProvider).askQuestion({
       'topicId': widget.topicId,
       'questionText': text,
     });
@@ -62,7 +63,7 @@ class _TopicQaPageState extends State<TopicQaPage> {
     final controller = _getAnswerController(questionId);
     final text = controller.text.trim();
     if (text.isEmpty) return;
-    await EngagementRemoteDataSource().answerQuestion(questionId, text);
+    await ref.read(engagementRemoteDataSourceProvider).answerQuestion(questionId, text);
     controller.clear();
     _load();
   }

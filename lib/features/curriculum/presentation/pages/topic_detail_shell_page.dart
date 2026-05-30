@@ -9,7 +9,6 @@ import 'package:finalyearproject/features/content/presentation/pages/topic_repor
 import 'package:finalyearproject/features/content/presentation/pages/topic_video_page.dart';
 import 'package:finalyearproject/features/content/presentation/widgets/topic_module_scaffold.dart';
 import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';

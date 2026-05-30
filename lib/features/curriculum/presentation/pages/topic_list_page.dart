@@ -4,13 +4,14 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_section_header.dar
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_subject_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/topic_detail_shell_page.dart';
 import 'package:finalyearproject/features/curriculum/presentation/pages/topic_form_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TopicListPage extends StatefulWidget {
+class TopicListPage extends ConsumerStatefulWidget {
   const TopicListPage({
     super.key,
     required this.chapterId,
@@ -25,10 +26,10 @@ class TopicListPage extends StatefulWidget {
   final bool isStudent;
 
   @override
-  State<TopicListPage> createState() => _TopicListPageState();
+  ConsumerState<TopicListPage> createState() => _TopicListPageState();
 }
 
-class _TopicListPageState extends State<TopicListPage> {
+class _TopicListPageState extends ConsumerState<TopicListPage> {
   List<TopicModel> _topics = [];
   bool _loading = true;
 
@@ -42,7 +43,7 @@ class _TopicListPageState extends State<TopicListPage> {
     setState(() => _loading = true);
     try {
       final topics =
-          await CurriculumRemoteDataSource().getTopicsByChapter(widget.chapterId);
+          await ref.read(curriculumRemoteDataSourceProvider).getTopicsByChapter(widget.chapterId);
       setState(() {
         _topics = topics;
         _loading = false;

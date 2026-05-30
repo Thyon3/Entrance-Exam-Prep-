@@ -1,7 +1,8 @@
 import 'package:finalyearproject/core/network/api_client.dart';
 
 class EngagementRemoteDataSource {
-  final ApiClient _api = ApiClient();
+  EngagementRemoteDataSource(this._api);
+  final ApiClient _api;
 
   Future<List<dynamic>> getUnreadNotifications() async {
     final data = await _api.get('/notifications/unread');

@@ -1,10 +1,11 @@
+import 'package:finalyearproject/core/network/api_client_provider.dart';
 import 'package:finalyearproject/features/auth/data/auth_repository.dart';
 import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
 import 'package:finalyearproject/features/auth/domain/auth_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) => AuthRepository(AuthRemoteDataSource()),
+  (ref) => AuthRepository(AuthRemoteDataSource(ref.watch(apiClientProvider))),
 );
 
 class AuthState {

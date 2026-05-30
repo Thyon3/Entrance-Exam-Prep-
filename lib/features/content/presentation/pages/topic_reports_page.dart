@@ -1,17 +1,18 @@
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TopicReportsPage extends StatefulWidget {
+class TopicReportsPage extends ConsumerStatefulWidget {
   const TopicReportsPage({super.key, required this.topicId});
   final String topicId;
 
   @override
-  State<TopicReportsPage> createState() => _TopicReportsPageState();
+  ConsumerState<TopicReportsPage> createState() => _TopicReportsPageState();
 }
 
-class _TopicReportsPageState extends State<TopicReportsPage> {
+class _TopicReportsPageState extends ConsumerState<TopicReportsPage> {
   List<dynamic> _issues = [];
   final _desc = TextEditingController();
   String _type = 'content_error';
@@ -24,7 +25,7 @@ class _TopicReportsPageState extends State<TopicReportsPage> {
   }
 
   Future<void> _load() async {
-    final all = await EngagementRemoteDataSource().getMyIssues();
+    final all = await ref.read(engagementRemoteDataSourceProvider).getMyIssues();
     setState(() {
       _issues = all.where((i) {
         if (i is! Map) return false;
@@ -36,7 +37,7 @@ class _TopicReportsPageState extends State<TopicReportsPage> {
   }
 
   Future<void> _submit() async {
-    await EngagementRemoteDataSource().createIssue({
+    await ref.read(engagementRemoteDataSourceProvider).createIssue({
       'topicId': widget.topicId,
       'issueType': _type,
       'description': _desc.text.trim(),
@@ -56,7 +57,7 @@ class _TopicReportsPageState extends State<TopicReportsPage> {
           child: Column(
             children: [
               DropdownButtonFormField<String>(
-                value: _type,
+                initialValue: _type,
                 decoration: const InputDecoration(
                   labelText: 'Issue type',
                   border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),

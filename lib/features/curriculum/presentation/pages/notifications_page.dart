@@ -3,17 +3,18 @@ import 'package:finalyearproject/core/widgets/futurex/futurex_list_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_states.dart';
 import 'package:finalyearproject/core/widgets/futurex/gradient_app_bar.dart';
-import 'package:finalyearproject/features/engagement/data/engagement_remote_data_source.dart';
+import 'package:finalyearproject/features/engagement/application/engagement_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NotificationsPage extends StatefulWidget {
+class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
 
   @override
-  State<NotificationsPage> createState() => _NotificationsPageState();
+  ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
 }
 
-class _NotificationsPageState extends State<NotificationsPage> {
+class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   List<dynamic> _items = [];
   bool _loading = true;
 
@@ -26,7 +27,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Future<void> _load() async {
     setState(() => _loading = true);
     try {
-      final list = await EngagementRemoteDataSource().getAllNotifications();
+      final list = await ref.read(engagementRemoteDataSourceProvider).getAllNotifications();
       setState(() {
         _items = list;
         _loading = false;
@@ -37,7 +38,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<void> _markRead(String id) async {
-    await EngagementRemoteDataSource().markNotificationRead(id);
+    await ref.read(engagementRemoteDataSourceProvider).markNotificationRead(id);
     _load();
   }
 

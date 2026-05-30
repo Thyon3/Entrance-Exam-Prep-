@@ -1,16 +1,17 @@
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
-import 'package:finalyearproject/features/admin/data/admin_remote_data_source.dart';
+import 'package:finalyearproject/features/admin/presentation/admin_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AdminUsersPage extends StatefulWidget {
+class AdminUsersPage extends ConsumerStatefulWidget {
   const AdminUsersPage({super.key});
 
   @override
-  State<AdminUsersPage> createState() => _AdminUsersPageState();
+  ConsumerState<AdminUsersPage> createState() => _AdminUsersPageState();
 }
 
-class _AdminUsersPageState extends State<AdminUsersPage> {
+class _AdminUsersPageState extends ConsumerState<AdminUsersPage> {
   List<dynamic> _users = [];
   bool _loading = true;
 
@@ -22,7 +23,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
 
   Future<void> _load() async {
     try {
-      final data = await AdminRemoteDataSource().listUsers();
+      final data = await ref.read(adminRemoteDataSourceProvider).listUsers();
       setState(() {
         _users = data is Map && data['users'] is List
             ? data['users'] as List
@@ -35,7 +36,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
   }
 
   Future<void> _setStatus(String id, String status) async {
-    await AdminRemoteDataSource().updateUserStatus(id, status);
+    await ref.read(adminRemoteDataSourceProvider).updateUserStatus(id, status);
     _load();
   }
 

@@ -12,7 +12,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.5.1
   http: ^1.2.2
-  dio: ^5.9.0
   flutter_secure_storage: ^9.0.0
   shared_preferences: ^2.3.2
   google_fonts: ^6.2.1

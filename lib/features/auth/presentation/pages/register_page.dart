@@ -1,6 +1,5 @@
 import 'package:finalyearproject/core/constants/util.dart';
 import 'package:finalyearproject/features/auth/application/auth_provider.dart';
-import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
 import 'package:finalyearproject/features/auth/presentation/pages/login_page.dart';
 import 'package:finalyearproject/features/auth/presentation/theme/auth_theme.dart';
 import 'package:finalyearproject/features/auth/presentation/widgets/auth_form_card.dart';
@@ -50,7 +49,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       _error = null;
     });
     try {
-      final remote = AuthRemoteDataSource();
+      final remote = ref.read(authRepositoryProvider);
       final result = await remote.register({
         'firstName': _firstName.text.trim(),
         'lastName': _lastName.text.trim(),

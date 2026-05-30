@@ -1,19 +1,20 @@
-import 'package:finalyearproject/features/auth/data/auth_remote_data_source.dart';
+import 'package:finalyearproject/features/auth/application/auth_provider.dart';
 import 'package:finalyearproject/features/auth/presentation/pages/login_page.dart';
 import 'package:finalyearproject/features/auth/presentation/theme/auth_theme.dart';
 import 'package:finalyearproject/features/auth/presentation/widgets/auth_form_card.dart';
 import 'package:finalyearproject/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ResetPasswordPage extends StatefulWidget {
+class ResetPasswordPage extends ConsumerStatefulWidget {
   const ResetPasswordPage({super.key, required this.resetToken});
   final String resetToken;
 
   @override
-  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
+  ConsumerState<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _ResetPasswordPageState extends State<ResetPasswordPage> {
+class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   bool _obscure1 = true;
@@ -42,7 +43,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       _error = null;
     });
     try {
-      await AuthRemoteDataSource()
+      await ref.read(authRepositoryProvider)
           .resetPassword(widget.resetToken, _password.text);
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(

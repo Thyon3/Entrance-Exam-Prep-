@@ -2,7 +2,8 @@ import 'package:finalyearproject/core/network/api_client.dart';
 import 'package:finalyearproject/features/curriculum/domain/curriculum_models.dart';
 
 class CurriculumRemoteDataSource {
-  final ApiClient _api = ApiClient();
+  CurriculumRemoteDataSource(this._api);
+  final ApiClient _api;
 
   Future<List<SubjectModel>> getSubjects() async {
     final data = await _api.get('/subjects', auth: false);

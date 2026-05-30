@@ -1,18 +1,19 @@
 import 'package:finalyearproject/core/widgets/futurex/futurex_content_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
-import 'package:finalyearproject/features/curriculum/data/curriculum_remote_data_source.dart';
+import 'package:finalyearproject/features/curriculum/application/curriculum_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TopicObjectivesPage extends StatefulWidget {
+class TopicObjectivesPage extends ConsumerStatefulWidget {
   const TopicObjectivesPage({super.key, required this.topicId, this.isStudent = true});
   final String topicId;
   final bool isStudent;
 
   @override
-  State<TopicObjectivesPage> createState() => _TopicObjectivesPageState();
+  ConsumerState<TopicObjectivesPage> createState() => _TopicObjectivesPageState();
 }
 
-class _TopicObjectivesPageState extends State<TopicObjectivesPage> {
+class _TopicObjectivesPageState extends ConsumerState<TopicObjectivesPage> {
   List<String> _objectives = [];
   final _controller = TextEditingController();
   bool _loading = true;
@@ -24,7 +25,7 @@ class _TopicObjectivesPageState extends State<TopicObjectivesPage> {
   }
 
   Future<void> _load() async {
-    final topic = await CurriculumRemoteDataSource().getTopic(widget.topicId);
+    final topic = await ref.read(curriculumRemoteDataSourceProvider).getTopic(widget.topicId);
     setState(() {
       _objectives = topic.objectives ?? [];
       _loading = false;
@@ -33,7 +34,7 @@ class _TopicObjectivesPageState extends State<TopicObjectivesPage> {
 
   Future<void> _save() async {
     final lines = _controller.text.split('\n').where((l) => l.trim().isNotEmpty).toList();
-    await CurriculumRemoteDataSource().updateTopic(widget.topicId, {
+    await ref.read(curriculumRemoteDataSourceProvider).updateTopic(widget.topicId, {
       'topicObjectives': lines,
     });
     _load();

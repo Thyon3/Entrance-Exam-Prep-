@@ -1,7 +1,8 @@
 import 'package:finalyearproject/core/network/api_client.dart';
 
 class AdminRemoteDataSource {
-  final ApiClient _api = ApiClient();
+  AdminRemoteDataSource(this._api);
+  final ApiClient _api;
 
   Future<dynamic> listUsers({Map<String, String>? params}) =>
       _api.get('/admin/users', query: params);
