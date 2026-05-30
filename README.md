@@ -1,49 +1,60 @@
-# Entrance Exam Prep (Flutter Mobile)
+# Entrance Exam Prep (Flutter)
 
-Mobile version of the Grade 12 entrance exam preparation web app. Uses the **same backend API** as `Final_year_project_2-Entrance-Exam-Preparation-Platform` and follows the **module + clean architecture** layout from `nexatrackerprod`.
+A Flutter mobile application designed for Grade 12 students to prepare for entrance exams. It features a structured curriculum, performance tracking, and an integrated AI study assistant.
 
-## Run
+## Features
 
-```bash
-cd finalyearproject
-flutter pub get
-flutter run
-```
+- **Student Portal**: Curriculum access (Subjects → Chapters → Topics), progress tracking, and bookmarking.
+- **Learning Modules**: Includes Objectives, Notes, Videos, Exercises, Quizzes, and Exams for every topic.
+- **AI Support**: Integrated study assistant for concept clarification.
+- **Engagement**: Q&A discussion boards and real-time notifications.
+- **Teacher Tools**: Managing curriculum content and answering student questions.
+- **Admin Panel**: User management and course configuration.
 
-## API URL
+## Technical Details
 
-Default production API (same as the React app):
+- **Framework**: Flutter (Stable)
+- **State Management**: Riverpod
+- **Architecture**: Module-based Clean Architecture (Domain, Data, Application, Presentation layers)
+- **Local Settings**: Edit `lib/core/constants/util.dart` to change the API endpoint (e.g., for local backend testing).
 
-`https://final-year-project-2-entrance-exam.onrender.com/api`
+## Project Layout
 
-To use a local backend, edit `lib/core/constants/util.dart`:
-
-```dart
-const String apiUrl = 'http://10.0.2.2:5000/api'; // Android emulator → localhost:5000
-```
-
-## Project structure
-
-```
+```text
 lib/
-├── core/           # API client, theme, shared widgets
-├── shared/         # Auth gate, grade provider
+├── core/           # API client, styles, and utilities
+├── shared/         # Common providers and UI components
 └── features/
-    ├── auth/       # Login, register, forgot/reset password
-    ├── student/    # Dashboard, drawer
-    ├── curriculum/ # Subjects → chapters → topics
-    ├── content/    # Topic tabs (objectives, concept, video, …)
-    ├── engagement/ # Progress, bookmarks, notifications, Q&A
-    ├── teacher/    # Course management, Q&A/issues
-    ├── admin/      # Users, courses
-    ├── profile/
-    └── ai/         # AI study assistant
+    ├── auth/       # Authentication flow
+    ├── student/    # Dashboard and student-specific views
+    ├── curriculum/ # Subject/Chapter/Topic navigation
+    ├── content/    # Topic module implementations
+    ├── engagement/ # Progress, QA, and notifications
+    ├── teacher/    # Content management for teachers
+    ├── admin/      # Administrative controls
+    └── ai/         # AI assistant integration
 ```
 
-Each feature uses: `domain/`, `data/` (`*_remote_data_source.dart`), `application/` (Riverpod), `presentation/pages/`.
+## Getting Started
 
-## Roles
+1. **Install Dependencies**:
+   ```bash
+   flutter pub get
+   ```
 
-- **Student**: dashboard, curriculum, all topic tabs, AI tutor, bookmarks, reports
-- **Teacher**: subjects/chapters/topics CRUD, Q&A and issue review
-- **Admin**: user status, subject CRUD
+2. **Configure API**:
+   Update `apiUrl` in `lib/core/constants/util.dart`. By default, it points to the production backend.
+
+3. **Run App**:
+   ```bash
+   flutter run
+   ```
+
+## Group Contributors
+
+| Name | ID |
+| :--- | :--- |
+| Aman Atalay | UGR/4364/15 |
+| Asnake Mengesha | UGR/9465/15 |
+| Daniel Shitaye | NSR/9066/14 |
+| Fraol Dereje | UGR/6955/15 |
