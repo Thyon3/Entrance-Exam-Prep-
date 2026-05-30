@@ -94,3 +94,15 @@ lib/
 * **Student**: Access to dashboards, learning pathways, AI Tutor chatbot, practice tests, and performance bookmarks.
 * **Teacher**: Management portal for subjects, chapters, and topics; Q&A thread management.
 * **Admin**: Subject CRUD and global user moderation dashboards.
+
+---
+
+## 👥 Group Contributors
+
+| 🧑‍💻 Name | 🆔 Student ID |
+| :--- | :--- |
+| **Aman Atalay** | `UGR/4364/15` |
+| **Asnake Mengesha** | `UGR/9465/15` |
+| **Daniel Shitaye** | `NSR/9066/14` |
+| **Fraol Dereje** | `UGR/6955/15` |
+
