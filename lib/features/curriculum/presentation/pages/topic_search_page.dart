@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:finalyearproject/core/constants/futurex_colors.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_list_card.dart';
 import 'package:finalyearproject/core/widgets/futurex/futurex_loader.dart';
@@ -24,15 +26,38 @@ class _TopicSearchPageState extends ConsumerState<TopicSearchPage> {
   List<TopicModel> _results = [];
   bool _searching = false;
   bool _searched = false;
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _query.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _search();
+    });
+  }
 
   @override
   void dispose() {
+    _debounce?.cancel();
+    _query.removeListener(_onSearchChanged);
     _query.dispose();
     super.dispose();
   }
 
   Future<void> _search() async {
-    if (_query.text.trim().length < 2) return;
+    if (_query.text.trim().length < 2) {
+      setState(() {
+        _results = [];
+        _searching = false;
+        _searched = false;
+      });
+      return;
+    }
     setState(() {
       _searching = true;
       _searched = true;
