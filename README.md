@@ -30,6 +30,27 @@ Below are screenshots and descriptions of the core screens in the application, h
 
 ---
 
+## 🌙 Dark Mode Screenshots
+
+The app features a fully polished **dark mode** with deep navy backgrounds, soft card surfaces, and consistent theming across every screen — no white cards or ugly contrasts.
+
+| **Home (Dark)** | **Chapter List (Dark)** | **Topic List (Dark)** |
+| :---: | :---: | :---: |
+| <img src="screenshots/darkmode_homepage.png" width="220" /> | <img src="screenshots/darkmode_chapterlistpage.png" width="220" /> | <img src="screenshots/darkmode_topiclistpage.png" width="220" /> |
+| Dashboard in dark mode with subject cards, progress charts and streak tracker. | Chapters list with dark card surfaces and completion indicators. | Topic list rendered with deep background and contrast-safe text. |
+
+| **Topic Detail (Dark)** | **Video Player (Dark)** | **Search (Dark)** |
+| :---: | :---: | :---: |
+| <img src="screenshots/darkmode_topicdetailpage.png" width="220" /> | <img src="screenshots/darkmode_videopage.png" width="220" /> | <img src="screenshots/darkmode_searchpage.png" width="220" /> |
+| Topic hub with tab navigation styled for dark theme. | Lecture video player with dark controls and playlist. | Search interface with dark input fields and result cards. |
+
+| **Profile (Dark)** | **Drawer (Dark)** | |
+| :---: | :---: | :---: |
+| <img src="screenshots/darkmode_profilepage.png" width="220" /> | <img src="screenshots/darkmode_selectdrawerpage.png" width="220" /> | |
+| Profile page in dark mode with themed cards and settings. | Side navigation drawer with dark background and icon theming. | |
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
