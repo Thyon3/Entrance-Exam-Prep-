@@ -47,7 +47,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
-    final height = MediaQuery.of(context).size.height;
 
     return AuthScaffold(
       title: 'Login to Account',
@@ -56,13 +55,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         onPressed: () => Navigator.maybePop(context),
       ),
       card: AuthFormCard(
-        cardHeightFactor: 0.52,
-        logoBottomFactor: 0.28,
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(height: height * 0.11),
+              const SizedBox(height: 8),
               AuthTextField(
                 label: 'Email',
                 controller: _email,
@@ -72,7 +70,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 validator: (v) =>
                     v == null || !v.contains('@') ? 'Enter a valid email' : null,
               ),
-              SizedBox(height: height * 0.025),
+              const SizedBox(height: 16),
               AuthTextField(
                 label: 'Password',
                 controller: _password,
@@ -99,7 +97,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              SizedBox(height: height * 0.04),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -117,7 +115,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       : const Text('Login'),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               GestureDetector(
                 onTap: () => Navigator.push(
                   context,
@@ -143,6 +141,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

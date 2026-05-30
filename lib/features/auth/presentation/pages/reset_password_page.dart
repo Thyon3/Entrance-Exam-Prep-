@@ -68,11 +68,10 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
         onPressed: () => Navigator.maybePop(context),
       ),
       card: AuthFormCard(
-        cardHeightFactor: 0.48,
-        logoBottomFactor: 0.22,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: height * 0.11),
+            const SizedBox(height: 8),
             AuthTextField(
               label: 'New password',
               controller: _password,

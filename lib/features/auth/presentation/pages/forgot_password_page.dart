@@ -55,11 +55,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         onPressed: () => Navigator.maybePop(context),
       ),
       card: AuthFormCard(
-        cardHeightFactor: 0.36,
-        logoBottomFactor: 0.1,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: height * 0.11),
+            const SizedBox(height: 8),
             AuthTextField(
               label: 'Email',
               controller: _email,

@@ -2,35 +2,32 @@ import 'package:finalyearproject/features/auth/presentation/theme/auth_theme.dar
 import 'package:finalyearproject/features/auth/presentation/widgets/auth_background.dart';
 import 'package:flutter/material.dart';
 
-/// White rounded card with watermark logo (nexatracker auth forms).
+/// White rounded card with watermark logo in the corner.
 class AuthFormCard extends StatelessWidget {
   const AuthFormCard({
     super.key,
     required this.child,
-    this.cardHeightFactor = 0.5,
-    this.logoBottomFactor = 0.3,
+    this.cardHeightFactor,
+    this.logoBottomFactor,
   });
 
   final Widget child;
-  final double cardHeightFactor;
-  final double logoBottomFactor;
+  final double? cardHeightFactor;
+  final double? logoBottomFactor;
 
   static const String logoAsset = 'lib/assets/images/application_log.png';
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.05),
+            color: Color.fromRGBO(0, 0, 0, 0.04),
             blurRadius: 16,
             offset: Offset(0, 8),
           ),
@@ -40,22 +37,20 @@ class AuthFormCard extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Positioned(
-            bottom: height * logoBottomFactor,
-            left: -width * 0.15,
+            right: -10,
+            bottom: -10,
             child: Opacity(
-              opacity: 0.12,
+              opacity: 0.06,
               child: Image.asset(
                 logoAsset,
-                height: height * 0.3,
-                width: width,
+                height: 95,
+                width: 95,
+                fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) => const SizedBox.shrink(),
               ),
             ),
           ),
-          SizedBox(
-            height: height * cardHeightFactor,
-            child: child,
-          ),
+          child,
         ],
       ),
     );
@@ -86,26 +81,29 @@ class AuthScaffold extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: AuthBackground(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: height * topSpacingFactor),
-              if (leading != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Align(alignment: Alignment.centerLeft, child: leading),
-                ),
-              Text(title, style: AuthTheme.titleOnBg(context), textAlign: TextAlign.center),
-              SizedBox(height: height * middleSpacingFactor),
-              card,
-              SizedBox(height: height * 0.16),
-              if (showFooter)
-                Text(
-                  '© ${DateTime.now().year} Entrance Exam Prep',
-                  style: AuthTheme.footer(),
-                ),
-              const SizedBox(height: 24),
-            ],
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: height * topSpacingFactor * 0.5),
+                if (leading != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Align(alignment: Alignment.centerLeft, child: leading),
+                  ),
+                const SizedBox(height: 12),
+                Text(title, style: AuthTheme.titleOnBg(context), textAlign: TextAlign.center),
+                SizedBox(height: height * middleSpacingFactor * 0.6),
+                card,
+                SizedBox(height: height * 0.06),
+                if (showFooter)
+                  Text(
+                    '© ${DateTime.now().year} Entrance Exam Prep',
+                    style: AuthTheme.footer(),
+                  ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),

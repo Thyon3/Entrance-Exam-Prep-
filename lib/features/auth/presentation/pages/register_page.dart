@@ -128,8 +128,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         },
       ),
       card: AuthFormCard(
-        cardHeightFactor: _step == 0 ? 0.72 : 0.38,
-        logoBottomFactor: _step == 0 ? 0.45 : 0.08,
         child: _step == 0 ? _buildForm(height) : _buildOtp(height),
       ),
     );
@@ -140,8 +138,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       child: Form(
         key: _formKey,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: height * 0.06),
+            const SizedBox(height: 8),
             AuthTextField(
               label: 'First name',
               controller: _firstName,
@@ -260,8 +259,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   Widget _buildOtp(double height) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(height: height * 0.08),
+        const SizedBox(height: 8),
         Text(
           'We sent a verification code to',
           style: AuthTheme.fieldLabel(),
