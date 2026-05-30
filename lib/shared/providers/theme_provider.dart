@@ -9,7 +9,7 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
 class ThemeNotifier extends StateNotifier<ThemeMode> {
   static const _themeKey = 'app_theme_mode';
 
-  ThemeNotifier() : super(ThemeMode.system) {
+  ThemeNotifier() : super(ThemeMode.light) {
     _loadTheme();
   }
 
@@ -18,6 +18,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     final isDark = prefs.getBool(_themeKey);
     if (isDark != null) {
       state = isDark ? ThemeMode.dark : ThemeMode.light;
+    } else {
+      state = ThemeMode.light;
     }
   }
 
